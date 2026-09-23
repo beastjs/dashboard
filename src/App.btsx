@@ -1,0 +1,9 @@
+
+import {Topbar} from "@/components";
+import ThemeProvider from "@/components/Theme.btsx";
+import Sidebar from "./components/Sidebar.btsx";
+props {}:{}
+ThemeProvider
+  Topbar(toggleSidebar={() => {}})
+  div(className='flex')
+    Sidebar(path={window.location.pathname})

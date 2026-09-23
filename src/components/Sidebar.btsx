@@ -1,0 +1,57 @@
+import { cn } from "@/lib/utils"
+import {Icon, type IconName} from "@/lib/icons"
+import { navGroups } from "@/components/navs"
+import { Link } from "@octanejs/tanstack-router"
+
+module
+  export interface SidebarProps {
+  }
+
+  export interface SidebarItemProps {
+    href: string
+    icon: IconName
+    label: string
+    value: string | number
+    path?: string
+    // onNavigate: (to: string) => (event: MouseEvent) => void
+  }
+
+  const SIDEBAR_ITEM_CLASS = "flex w-full items-center gap-3 rounded-[12px] border py-1 pl-1 pr-[8px] text-left transition"
+  const SIDEBAR_ITEM_SELECTED_CLASS = "bg-secondary/80 hover:bg-muted hover:border-input border-border/0"
+  const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-transparent hover:bg-sidebar/70"
+  const SIDEBAR_ICON_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-transparent"
+  const SIDEBAR_ICON_SELECTED_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-background shadow-[0_0_4px_rgba(0,0,0,0.1)]"
+  const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground"
+  const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-muted-foreground text-sm md:text-[14px] leading-5 tracking-[-0.28px] truncate"
+  const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
+  const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
+
+component SidebarItem
+  props { href, icon, label, path }: SidebarItemProps
+  setup
+    const isExternal = href.startsWith("http")
+    const isSelected = path === href
+    const itemClassName = cn(SIDEBAR_ITEM_CLASS, path === href ? SIDEBAR_ITEM_SELECTED_CLASS : SIDEBAR_ITEM_DEFAULT_CLASS)
+    const iconContainerClassName = isSelected ? SIDEBAR_ICON_SELECTED_CONTAINER_CLASS : SIDEBAR_ICON_CONTAINER_CLASS
+
+  a(href={href} className={itemClassName} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined} aria-current={isSelected ? "page" : undefined})
+    div(className={iconContainerClassName})
+      Icon(name={icon} size={18} className={cn(SIDEBAR_ICON_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)})
+    span(className={cn(SIDEBAR_LABEL_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)}) #{label}
+
+
+props {path}: {path: string}
+aside(className="hidden md:flex w-[256px] shrink-0 border-r border-border/40 flex-col sticky top-[64px] h-[calc(100vh-64px)] overflow-hidden")
+  div(className="flex-1 overflow-y-auto p-3 space-y-6")
+    each group in navGroups
+      div(key={group.title})
+        div(className="text-xs tracking-wider opacity-50 capitalize px-2 mb-2") #{group.title}
+        nav(className="space-y-0.5")
+          each item in group.items key item.href
+            SidebarItem({...item} path={path})
+
+  div(className=" border-border shrink-0")
+    div(className="flex items-center h-12 gap-2 px-2 rounded-xs bg-card")
+      div(className="flex-1 min-w-0")
+        div(className="text-[12px] font-medium text-foreground leading-none")
+        div(className="text-[11px] font-mono text-muted-foreground") v0.2.7
