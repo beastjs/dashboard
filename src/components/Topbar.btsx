@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils"
 import { Icon } from '@/lib/icons';
 import Button from "./ui/Button.btsx";
 import { ThemeToggle } from "./ThemeProvider.btsx";
+import { Link } from "@octanejs/tanstack-router";
 
 module
   interface TopbarProps {
@@ -23,8 +24,8 @@ component Brand
 
 
   div(className={cn(BRAND_CLASS, className)})
-    a(className="flex items-center gap-4" href="/") App
-      div #{children}
+    Link(className="flex items-center gap-4" to="/") App
+    div #{children}
 
 
 props { toggleSidebar, isCompact = false }: TopbarProps
