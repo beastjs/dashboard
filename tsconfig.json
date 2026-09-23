@@ -8,14 +8,10 @@
     "noEmit": true,
     "skipLibCheck": true,
     "jsx": "preserve",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -23,10 +19,7 @@
       }
     ]
   },
-  "include": [
-    "src",
-    "rsbuild.config.ts"
-  ],
+  "include": ["src", "rsbuild.config.ts"],
   "tsrx": {
     "compiler": "octane"
   }

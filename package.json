@@ -8,7 +8,8 @@
     "build": "rsbuild build",
     "preview": "rsbuild preview",
     "typecheck": "tsrx-tsc --noEmit",
-    "check": "bun run typecheck && bun run build"
+    "check": "bun run typecheck && bun run build",
+    "gen": "bun scripts/gen/index.ts"
   },
   "dependencies": {
     "@octanejs/resizable-panels": "^0.0.13",

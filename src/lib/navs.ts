@@ -44,6 +44,15 @@ export const navGroups: NavGroup[] = [
         description: 'My Projects',
         value: '08',
         tags: ['projects']
+      },
+      {
+        href: '/settings',
+        icon: 'mechanics',
+        label: 'Settings',
+        title: 'Settings',
+        description: 'My Settings',
+        value: '00',
+        tags: ['settings']
       }
     ]
   },

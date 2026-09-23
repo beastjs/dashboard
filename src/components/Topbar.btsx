@@ -36,4 +36,4 @@ header(className="sticky top-0 z-40 backdrop-blur-3xl w-full")
           Icon(name='sidebar' className="size-4")
     div(className="flex items-center gap-2")
       ThemeToggle
-      Button(label="Docs" variant='dark' size="sm" type='a' href='https://beast-docs.vercel.app' target="_blank" rel="noopener noreferrer" className="hidden md:flex")
+      Button(label="Docs" variant='default' size="sm" type='a' href='https://beast-docs.vercel.app' target="_blank" rel="noopener noreferrer" className="hidden md:flex")
