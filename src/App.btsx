@@ -1,8 +1,5 @@
 import { useEffect, useState } from "octane";
-import {Topbar} from "@/components";
-import ThemeProvider from "@/components/Theme.btsx";
-import Sidebar, { SidebarNav } from "./components/Sidebar.btsx";
-import MobileSidebar from "./components/MobileSidebar.btsx";
+import {Topbar, ThemeProvider, Sidebar, SidebarNav, MobileSidebar} from "@/components";
 import { Outlet, useLocation } from "@octanejs/tanstack-router";
 import { Group, Panel, Separator, useDefaultLayout, usePanelRef } from "@octanejs/resizable-panels";
 import { useMediaQuery } from "@/lib/useMediaQuery";

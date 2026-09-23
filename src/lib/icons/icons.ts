@@ -11,6 +11,12 @@ export const icons = {
     viewBox: '0 0 16 16',
     set: 'svg'
   },
+  account: {
+    symbol:
+      '<path fill="currentColor" d="M5.982 12.867 2.358 7.994l3.604-4.736-.696-.954-4.062 5.34-.005.684 4.081 5.493z" font-size="18" transform-origin="0 0"/><path fill="currentColor" d="M7.247 1.188H5.852l5.031 6.913-4.912 6.687h1.403l4.91-6.685z" font-size="18" transform-origin="0 0"/><path fill="currentColor" d="M9.945 1.188H8.532l5.111 6.83-5.111 6.77h1.415l4.851-6.426v-.684z" font-size="18" transform-origin="0 0"/>',
+    viewBox: '0 0 16 16',
+    set: 'svg'
+  },
   theme: {
     symbol:
       '<g fill="none"><path fill="currentColor" d="M2.75 12A9.25 9.25 0 0 0 12 21.25V2.75A9.25 9.25 0 0 0 2.75 12"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21.25a9.25 9.25 0 0 0 0-18.5m0 18.5a9.25 9.25 0 0 1 0-18.5m0 18.5V2.75"/></g>',
@@ -47,12 +53,6 @@ export const icons = {
     viewBox: '0 0 24 24',
     set: 'mingcute'
   },
-  'arrow-right-up': {
-    symbol:
-      '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 6.343L6.343 17.657M18 14V6h-8"/>',
-    viewBox: '0 0 24 24',
-    set: 'mingcute'
-  },
   mechanics: {
     symbol:
       '<path d="M10.005 14.004a.75.75 0 0 1 .75.75v1.699l.982-.552a.75.75 0 0 1 .966.201l.056.085a.75.75 0 0 1-.286 1.021l-1.691.951a1.59 1.59 0 0 1-1.553 0l-1.691-.951a.75.75 0 1 1 .735-1.307l.982.552v-1.699a.75.75 0 0 1 .648-.743zm6.875-3.294a.75.75 0 0 1 .75.75v1.922c0 .572-.309 1.1-.807 1.38l-1.808 1.017a.75.75 0 1 1-.735-1.307l1.086-.611-1.442-.833a.75.75 0 0 1-.319-.933l.045-.092a.75.75 0 0 1 1.025-.275l1.457.842v-1.11a.75.75 0 0 1 .648-.743l.102-.007zm-13.75 0a.75.75 0 0 1 .75.75v1.11l1.457-.842a.75.75 0 0 1 .968.19l.057.085a.75.75 0 0 1-.275 1.025l-1.443.833 1.087.611a.75.75 0 0 1 .33.929l-.044.092a.75.75 0 0 1-1.021.286l-1.808-1.017a1.58 1.58 0 0 1-.807-1.38V11.46a.75.75 0 0 1 .75-.75zm10.863-6.199a.75.75 0 0 1 1.021-.286l1.808 1.017c.499.28.807.808.807 1.38v1.921a.75.75 0 1 1-1.5 0V7.432l-1.423.823a.75.75 0 0 1-.968-.19l-.057-.085a.75.75 0 0 1 .275-1.025l1.409-.814-1.086-.61a.75.75 0 0 1-.33-.929zm-8.998-.286a.75.75 0 1 1 .735 1.307l-1.087.61 1.409.814a.75.75 0 0 1 .319.933l-.045.092a.75.75 0 0 1-1.025.275L3.88 7.433v1.11a.75.75 0 0 1-.648.743l-.102.007a.75.75 0 0 1-.75-.75V6.622c0-.572.309-1.1.807-1.38zm4.233-2.381a1.59 1.59 0 0 1 1.553 0l1.691.951a.75.75 0 0 1-.735 1.307l-.982-.553V5.21a.75.75 0 0 1-.648.743l-.102.007a.75.75 0 0 1-.75-.75V3.549l-.982.553a.75.75 0 0 1-.966-.201l-.056-.085a.75.75 0 0 1 .286-1.021z" transform-origin="0 0" fill="currentColor"/>',
@@ -83,34 +83,10 @@ export const icons = {
     viewBox: '0 0 16 16',
     set: 'svg'
   },
-  logs: {
-    symbol:
-      '<path fill="currentColor" fill-rule="evenodd" d="M9 2h6v1.5H9zm0 10h6v1.5H9zm.75-5H9v1.5h6V7zM1 12h2v1.5H1zm.75-10H1v1.5h2V2zM1 7h2v1.5H1zm4.75 5H5v1.5h2V12zM5 2h2v1.5H5zm.75 5H5v1.5h2V7z" clip-rule="evenodd" shape-rendering="geometricprecision" transform-origin="0 0"/>',
-    viewBox: '0 0 16 16',
-    set: 'svg'
-  },
-  github: {
-    symbol:
-      '<path fill="currentColor" d="M5.111 8.644c-1.48-.184-2.526-1.245-2.528-2.632 0-.563.2-1.168.544-1.572-.148-.373-.12-1.16.045-1.481.45-.056 1.055.184 1.411.505.424-.136.872-.2 1.425-.203.552 0 1 .071 1.407.19.344-.312.968-.552 1.413-.492.155.302.184 1.091.035 1.47.36.424.552 1 .552 1.583 0 1.384-1.048 2.424-2.549 2.62.379.248.64.788.64 1.405v1.168c0 .338.28.528.613.387a5.71 5.71 0 0 0 3.632-5.319c0-3.177-2.585-5.769-5.76-5.769C2.807.504.247 3.096.247 6.273c0 2.49 1.583 4.56 3.72 5.335.302.113.598-.088.598-.396v-.9a1.5 1.5 0 0 1-.542.112c-.744 0-1.176-.408-1.491-1.152-.12-.303-.261-.486-.522-.516-.136-.008-.183-.071-.179-.14 0-.136.226-.232.448-.233.328 0 .605.2.899.617.226.328.457.472.747.473.28 0 .456-.104.717-.361.19-.189.338-.36.469-.469" font-size="3.496"/>',
-    viewBox: '0 0 12 12',
-    set: 'svg'
-  },
   'chevron-down': {
     symbol:
       '<path fill="none" stroke="oklch(14.5% 0 0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9s-4.419 6-6 6-6-6-6-6" transform-origin="0 0"/>',
     viewBox: '0 0 24 24',
-    set: 'svg'
-  },
-  clear: {
-    symbol:
-      '<g transform="scale(0.667)"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 12h8m5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></g>',
-    viewBox: '0 0 16 16',
-    set: 'svg'
-  },
-  person: {
-    symbol:
-      '<g transform="scale(0.667)"><path d="M19.652 19.405c.552-.115.882-.693.607-1.187-.606-1.087-1.56-2.043-2.78-2.771C15.907 14.509 13.98 14 12 14s-3.907.508-5.479 1.447c-1.22.728-2.174 1.684-2.78 2.771-.275.494.055 1.072.607 1.187a37.5 37.5 0 0 0 15.303 0" fill="currentColor"/><circle cx="12" cy="8" r="5"/></g>',
-    viewBox: '0 0 16 16',
     set: 'svg'
   },
   'spinner-ring': {
@@ -121,12 +97,6 @@ export const icons = {
   menu: {
     symbol:
       '<g transform="scale(0.667)"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 6h10M4 12h16M7 12h13M7 18h10"/></g>',
-    viewBox: '0 0 16 16',
-    set: 'svg'
-  },
-  account: {
-    symbol:
-      '<path fill="currentColor" d="M5.982 12.867 2.358 7.994l3.604-4.736-.696-.954-4.062 5.34-.005.684 4.081 5.493z" font-size="18" transform-origin="0 0"/><path fill="currentColor" d="M7.247 1.188H5.852l5.031 6.913-4.912 6.687h1.403l4.91-6.685z" font-size="18" transform-origin="0 0"/><path fill="currentColor" d="M9.945 1.188H8.532l5.111 6.83-5.111 6.77h1.415l4.851-6.426v-.684z" font-size="18" transform-origin="0 0"/>',
     viewBox: '0 0 16 16',
     set: 'svg'
   }
