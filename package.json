@@ -11,6 +11,7 @@
     "check": "bun run typecheck && bun run build"
   },
   "dependencies": {
+    "@octanejs/resizable-panels": "^0.0.13",
     "@octanejs/shadcn": "0.0.38",
     "@octanejs/tanstack-router": "^0.1.56",
     "beast-tsrx": "0.2.62",

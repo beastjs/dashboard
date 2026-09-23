@@ -5,6 +5,7 @@
     "": {
       "name": "saia",
       "dependencies": {
+        "@octanejs/resizable-panels": "^0.0.13",
         "@octanejs/shadcn": "0.0.38",
         "@octanejs/tanstack-router": "^0.1.56",
         "beast-tsrx": "0.2.62",
@@ -126,6 +127,8 @@
     "@octanejs/lucide": ["@octanejs/lucide@0.1.47", "", { "dependencies": { "@lucide/icons": "1.24.0" }, "peerDependencies": { "octane": "^0.1.51 || ^0.2.0" } }, "sha512-DQN1g2qap6W2vlgsQHPCOzy7KZLhojZ9EfBCZgmptTIgV2Z2a/XQn2KRGhLPlatkJ9geDcxj3MK2/pCdbDsqRA=="],
 
     "@octanejs/radix": ["@octanejs/radix@0.1.52", "", { "dependencies": { "@octanejs/floating-ui": "0.1.52", "aria-hidden": "^1.2.6" }, "peerDependencies": { "octane": "^0.1.51 || ^0.2.0" } }, "sha512-jDlI5FwkJl2umKxFXc6i1O/QIe8JRdEAmzws9bNQtdzxcsoW+8zJxlB5zX4jByCvplWPEP9E/uFQnAkBOgQVMQ=="],
+
+    "@octanejs/resizable-panels": ["@octanejs/resizable-panels@0.0.13", "", { "peerDependencies": { "octane": "^0.4.0" } }, "sha512-MuPN5HCxZdzeF7emnI/jUsflBfSqlZPF3GcYmZUC3RtY/XImuQEXx+zdIEzT0yBFn/nSOvAsPAuczYrWAKJdPw=="],
 
     "@octanejs/rsbuild-plugin": ["@octanejs/rsbuild-plugin@0.1.50", "", { "dependencies": { "@octanejs/app-core": "0.0.51", "@octanejs/rspack-plugin": "0.1.50" }, "peerDependencies": { "@rsbuild/core": "^2.0.0", "octane": "^0.2.13" }, "bin": { "octane-rsbuild-preview": "src/bin/preview.js" } }, "sha512-Gjdsw4FYaAt2gNY2c5DdxWH4iBDWlC7iE1RPK6J5jyJg020YC7rfOjQ7m/WCShMxdt6cbpE5AzY4/tJhD5SLkQ=="],
 

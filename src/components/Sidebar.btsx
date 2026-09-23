@@ -2,6 +2,8 @@ import { cn } from "@/lib/utils"
 import {Icon, type IconName} from "@/lib/icons"
 import { navGroups } from "@/components/navs"
 import { Link } from "@octanejs/tanstack-router"
+import { createElement } from "octane"
+import FluidTooltip, { FluidTooltipContent, FluidTooltipRoot, FluidTooltipTrigger } from "@/components/ui/FluidTooltip.btsx"
 
 module
   export interface SidebarProps {
@@ -13,6 +15,7 @@ module
     label: string
     value: string | number
     path?: string
+    isCompact?: boolean
     // onNavigate: (to: string) => (event: MouseEvent) => void
   }
 
@@ -25,33 +28,73 @@ module
   const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-muted-foreground text-sm md:text-[14px] leading-5 tracking-[-0.28px] truncate"
   const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
   const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
+  const SIDEBAR_ITEM_COMPACT_CLASS = "justify-center gap-0 p-1"
+
+  export { SidebarNav }
 
 component SidebarItem
-  props { href, icon, label, path }: SidebarItemProps
+  props { href, icon, label, path, isCompact = false }: SidebarItemProps
   setup
     const isExternal = href.startsWith("http")
     const isSelected = path === href
-    const itemClassName = cn(SIDEBAR_ITEM_CLASS, path === href ? SIDEBAR_ITEM_SELECTED_CLASS : SIDEBAR_ITEM_DEFAULT_CLASS)
+    const itemClassName = cn(SIDEBAR_ITEM_CLASS, isSelected ? SIDEBAR_ITEM_SELECTED_CLASS : SIDEBAR_ITEM_DEFAULT_CLASS, isCompact && SIDEBAR_ITEM_COMPACT_CLASS)
+    const labelClassName = cn(SIDEBAR_LABEL_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)
+    const iconClassName = cn(SIDEBAR_ICON_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)
     const iconContainerClassName = isSelected ? SIDEBAR_ICON_SELECTED_CONTAINER_CLASS : SIDEBAR_ICON_CONTAINER_CLASS
+    const compactLink = isCompact
+      ? isExternal
+        ? createElement("a", { href, className: itemClassName, target: "_blank", rel: "noopener noreferrer" })
+        : createElement(Link, { to: href, className: itemClassName, "aria-current": isSelected ? "page" : undefined })
+      : undefined
 
-  a(href={href} className={itemClassName} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noopener noreferrer" : undefined} aria-current={isSelected ? "page" : undefined})
-    div(className={iconContainerClassName})
-      Icon(name={icon} size={18} className={cn(SIDEBAR_ICON_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)})
-    span(className={cn(SIDEBAR_LABEL_CLASS, isSelected && SIDEBAR_SELECTED_TEXT_CLASS)}) #{label}
+  if isCompact
+    FluidTooltipRoot(id={href} side="right" sideOffset={12})
+      FluidTooltipTrigger(render={compactLink})
+        fragment
+          div(className={iconContainerClassName})
+            Icon(name={icon} size={18} className={iconClassName})
+          span(className="sr-only") #{label}
+      FluidTooltipContent #{label}
+  else
+    if isExternal
+      a(href={href} className={itemClassName} target="_blank" rel="noopener noreferrer")
+        div(className={iconContainerClassName})
+          Icon(name={icon} size={18} className={SIDEBAR_ICON_CLASS})
+        span(className={SIDEBAR_LABEL_CLASS}) #{label}
+    else
+      Link(to={href} className={itemClassName} aria-current={isSelected ? "page" : undefined})
+        div(className={iconContainerClassName})
+          Icon(name={icon} size={18} className={iconClassName})
+        span(className={labelClassName}) #{label}
 
 
-props {path}: {path: string}
-aside(className="hidden md:flex w-[256px] shrink-0 border-r border-border/40 flex-col sticky top-[64px] h-[calc(100vh-64px)] overflow-hidden")
-  div(className="flex-1 overflow-y-auto p-3 space-y-6")
+component SidebarNav
+  props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
+  div(className={cn("p-3 space-y-6", className)})
     each group in navGroups
       div(key={group.title})
-        div(className="text-xs tracking-wider opacity-50 capitalize px-2 mb-2") #{group.title}
-        nav(className="space-y-0.5")
+        if isCompact
+          div(className="mx-2 mb-2 h-0 bg-border/60" role="presentation")
+        else
+          div(className="text-xs tracking-wider opacity-50 capitalize px-2 mb-2") #{group.title}
+        nav(className="space-y-1" aria-label={group.title})
           each item in group.items key item.href
-            SidebarItem({...item} path={path})
+            SidebarItem({...item} path={path} isCompact={isCompact})
 
-  div(className=" border-border shrink-0")
-    div(className="flex items-center h-12 gap-2 px-2 rounded-xs bg-card")
+component SidebarNavTooltips
+  props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
+  if isCompact
+    FluidTooltip(orientation="vertical")
+      SidebarNav(path={path} className={className} isCompact)
+  else
+    SidebarNav(path={path} className={className})
+
+props { path, isCompact = false }: { path: string; isCompact?: boolean }
+aside(className="hidden md:flex flex-col overflow-hidden w-full h-[calc(100dvh-var(--topbar-height))]" data-compact={isCompact || undefined})
+  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-hidden")
+
+  div(className=" shrink-0")
+    div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})
       div(className="flex-1 min-w-0")
-        div(className="text-[12px] font-medium text-foreground leading-none")
-        div(className="text-[11px] font-mono text-muted-foreground") v0.2.7
+        div(className="text-xs font-medium text-foreground leading-none")
+        div(className={cn("text-2xs font-mono text-muted-foreground", isCompact && "text-center")}) #{isCompact ? "v0.2" : "v0.2.7"}
