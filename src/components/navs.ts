@@ -20,31 +20,30 @@ export const navGroups: NavGroup[] = [
     items: [
       {
         href: '/',
-        icon: 'overview',
-        label: 'Overview',
-        title: '',
-        description: '',
+        icon: 'new-folder',
+        label: 'New',
+        title: 'New',
+        description: 'New folder.',
         value: '00',
-        tags: []
+        tags: ['create', 'new file', 'new folder']
       },
       {
         href: '/form',
-        icon: 'forms',
-        label: 'Form',
-        title: 'Adaptive Form with Validation Streams',
-        description:
-          'Composable async flows and cancellation. Debounced 300ms, cancelOnUpdate, race handling. No manual subscriptions.',
+        icon: 'folder',
+        label: 'Documents',
+        title: 'Docs',
+        description: 'Documents.',
         value: '02',
-        tags: ['AbortController', 'optimistic UI']
+        tags: ['docs', 'files']
       },
       {
         href: '/streaming',
-        icon: 'play',
-        label: 'Streaming',
-        title: 'Streaming — Edge at CDN',
-        description: 'Streams progressively from edge — yield skeleton then each card. Keyed cache at CDN.',
+        icon: 'account',
+        label: 'Projects',
+        title: 'Projects',
+        description: 'Projects.',
         value: '08',
-        tags: ['streaming']
+        tags: ['projects']
       }
     ]
   },
@@ -53,7 +52,7 @@ export const navGroups: NavGroup[] = [
     items: [
       {
         href: 'https://beast-docs.vercel.app',
-        icon: 'mechanics',
+        icon: 'arrow-right-up',
         label: 'beast-tsrx',
         title: '',
         description: '',
