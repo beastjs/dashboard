@@ -23,25 +23,25 @@ export const navGroups: NavGroup[] = [
         icon: 'new-folder',
         label: 'New',
         title: 'New',
-        description: 'New folder.',
+        description: 'New Folder',
         value: '00',
         tags: ['create', 'new file', 'new folder']
       },
       {
-        href: '/form',
+        href: '/documents',
         icon: 'folder',
         label: 'Documents',
         title: 'Docs',
-        description: 'Documents.',
+        description: 'My Documents',
         value: '02',
         tags: ['docs', 'files']
       },
       {
-        href: '/streaming',
+        href: '/projects',
         icon: 'account',
         label: 'Projects',
         title: 'Projects',
-        description: 'Projects.',
+        description: 'My Projects',
         value: '08',
         tags: ['projects']
       }

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import {Icon, type IconName} from "@/lib/icons"
-import { navGroups } from "@/components/navs"
+import { navGroups } from "@/lib/navs"
 import { Link } from "@octanejs/tanstack-router"
 import { createElement } from "octane"
 import FluidTooltip, { FluidTooltipContent, FluidTooltipRoot, FluidTooltipTrigger } from "@/components/ui/FluidTooltip.btsx"
@@ -98,4 +98,4 @@ aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
     div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})
       div(className="flex-1 min-w-0")
         div(className="text-xs font-medium text-foreground leading-none")
-        div(className={cn("text-2xs font-mono text-muted-foreground", isCompact && "text-center")}) #{isCompact ? "v0.2" : "v0.2.7"}
+        div(className={cn("text-2xs font-mono text-muted-foreground px-4", isCompact && "text-center")}) v0.2.62
