@@ -47,7 +47,7 @@ Drawer(
   ~ title={title}
   ~ description='Swipe right or use the close button to close navigation.'
   ~ trigger={trigger}
-  ~ className={cn('will-change-transform', className)}
+  ~ className={cn('will-change-transform rounded-l-xl', className)}
   ~ contentClassName='bg-inherit backdrop-blur-sm relative'
   ~ backdropClassName='bg-black/20! backdrop-blur-none!'
   ~ )

@@ -1,6 +1,6 @@
 import { Icon } from "@/lib/icons"
 import { navGroups, type NavItem } from "@/lib/navs"
-import { Atom, Clock, Leap, Trace } from "./loaders";
+import { Atom, Clock, Leap, Ripple, Trace } from "./loaders";
 
 module
   export interface PageHolderProps {
@@ -17,7 +17,7 @@ setup
       case '/documents':
         return Clock
       case '/projects':
-        return Leap
+        return Ripple
       case '/settings':
         return Trace
       default:

@@ -1,17 +1,17 @@
-import { createRootRoute, createRoute, createRouter } from '@octanejs/tanstack-router'
+import { createRootRoute, createRoute, createRouter, lazyRouteComponent } from '@octanejs/tanstack-router'
 import App from './App.btsx'
-import { Home, Documents, Projects, Settings } from './pages'
 
 const rootRoute = createRootRoute({ component: App })
 
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: Home })
-const formRoute = createRoute({ getParentRoute: () => rootRoute, path: '/documents', component: Documents })
-const streamingRoute = createRoute({ getParentRoute: () => rootRoute, path: '/projects', component: Projects })
-const settingsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: Settings })
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: lazyRouteComponent(() => import('./pages/Home.btsx')) })
+const formRoute = createRoute({ getParentRoute: () => rootRoute, path: '/documents', component: lazyRouteComponent(() => import('./pages/Documents.btsx')) })
+const streamingRoute = createRoute({ getParentRoute: () => rootRoute, path: '/projects', component: lazyRouteComponent(() => import('./pages/Projects.btsx')) })
+const settingsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings', component: lazyRouteComponent(() => import('./pages/Settings.btsx')) })
 
 const routeTree = rootRoute.addChildren([indexRoute, formRoute, streamingRoute, settingsRoute])
 
-export const router = createRouter({ routeTree })
+// Preload a route's chunk when its link is hovered or focused.
+export const router = createRouter({ routeTree, defaultPreload: 'intent' })
 
 declare module '@octanejs/tanstack-router' {
   interface Register {
