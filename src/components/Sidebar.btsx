@@ -19,12 +19,13 @@ module
     // onNavigate: (to: string) => (event: MouseEvent) => void
   }
 
+  const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] border-t-[0.4px] border-border/40 overflow-hidden"
   const SIDEBAR_ITEM_CLASS = "flex w-full items-center gap-3 rounded-[12px] border py-1 pl-1 pr-[8px] text-left transition"
   const SIDEBAR_ITEM_SELECTED_CLASS = "bg-secondary/80 hover:bg-muted hover:border-input border-border/0"
   const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-transparent hover:bg-sidebar/70"
   const SIDEBAR_ICON_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-transparent"
   const SIDEBAR_ICON_SELECTED_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-background shadow-[0_0_4px_rgba(0,0,0,0.1)]"
-  const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground"
+  const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground/80"
   const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-muted-foreground text-sm md:text-[14px] leading-5 tracking-[-0.28px] truncate"
   const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
   const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
@@ -90,8 +91,8 @@ component SidebarNavTooltips
     SidebarNav(path={path} className={className})
 
 props { path, isCompact = false }: { path: string; isCompact?: boolean }
-aside(className="hidden md:flex flex-col overflow-hidden w-full h-[calc(100dvh-var(--topbar-height))]" data-compact={isCompact || undefined})
-  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-hidden")
+aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
+  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-scroll")
 
   div(className=" shrink-0")
     div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})

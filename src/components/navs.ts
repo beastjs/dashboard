@@ -51,8 +51,8 @@ export const navGroups: NavGroup[] = [
     title: 'Resources',
     items: [
       {
-        href: 'https://beast-docs.vercel.app',
-        icon: 'arrow-right-up',
+        href: 'https://beast-docs-adv.beastjs.workers.dev',
+        icon: 'beast',
         label: 'beast-tsrx',
         title: '',
         description: '',
