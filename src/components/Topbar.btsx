@@ -33,8 +33,8 @@ header(className="sticky top-0 z-40 backdrop-blur-3xl w-full")
   div(className="topbar w-full px-5 flex items-center justify-between gap-4")
     Brand
       div(className="hidden md:flex items-center")
-        button(className="size-6 aspect-square place-items-center text-input hover:text-foreground hover:border-input transition" onClick={toggleSidebar} aria-label={isCompact ? "Expand sidebar" : "Compact sidebar"} aria-pressed={isCompact} title={isCompact ? "Expand sidebar" : "Compact sidebar"})
-          Icon(name='sidebar' className="size-4")
+        button(className="size-6 aspect-square place-items-center text-input hover:text-foreground/80 hover:border-input transition" onClick={toggleSidebar} aria-label={isCompact ? "Expand sidebar" : "Compact sidebar"} aria-pressed={isCompact} title={isCompact ? "Expand sidebar" : "Compact sidebar"})
+          Icon(name='sidebar' className="size-5")
     div(className="flex items-center gap-2")
       ThemeToggle
       Button(label="Docs" variant='default' size="sm" type='a' href='https://beast-docs.vercel.app' target="_blank" rel="noopener noreferrer" className="hidden md:flex")
