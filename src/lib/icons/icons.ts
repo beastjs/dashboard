@@ -85,7 +85,7 @@ export const icons = {
   },
   'chevron-down': {
     symbol:
-      '<path fill="none" stroke="oklch(14.5% 0 0)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9s-4.419 6-6 6-6-6-6-6" transform-origin="0 0"/>',
+      '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9s-4.419 6-6 6-6-6-6-6" transform-origin="0 0"/>',
     viewBox: '0 0 24 24',
     set: 'svg'
   },

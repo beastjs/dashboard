@@ -1,4 +1,13 @@
-import PageHolder from "@/components/PageHolder.btsx"
+import JsonViewer from "../components/JsonViewer.btsx";
+import { navGroups, NavItem } from "@/lib/navs";
+import { data } from "@/lib/data"
 
-props {}:{}
-PageHolder(href="/documents")
+
+
+props {href}:{href: string}
+setup
+  const item: NavItem | undefined = navGroups.flatMap((group) => group.items).find((navItem) => navItem.href === href)
+
+section(className="flex flex-col h-[calc(100vh-var(--topbar-height)] overflow-hidden")
+  div(className="h-[92dvh] overflow-y-auto p-0.5")
+    JsonViewer(data={data} withToolbar)
