@@ -1,0 +1,4 @@
+import { OctaneNode } from "octane";
+
+props {children}: {children: OctaneNode}
+div#shell(className='min-h-screen w-full') #{children}

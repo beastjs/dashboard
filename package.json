@@ -12,6 +12,7 @@
     "gen": "bun scripts/gen/index.ts"
   },
   "dependencies": {
+    "@danfessler/trellis": "^0.3.0",
     "@octanejs/resizable-panels": "^0.0.13",
     "@octanejs/shadcn": "0.0.44",
     "@octanejs/tanstack-router": "^0.1.57",

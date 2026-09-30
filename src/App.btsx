@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "octane";
 import ThemeProvider from "@/components/ThemeProvider.btsx";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import Shell from "./Shell.btsx";
 
 module
   // Each viewport only downloads its own shell: resizable panels + tooltips on desktop, the drawer on mobile.
@@ -13,6 +14,7 @@ setup
 ThemeProvider
   Suspense(fallback={null})
     if isDesktop
-      DesktopLayout
+      Shell
+        DesktopLayout
     else
       MobileLayout
