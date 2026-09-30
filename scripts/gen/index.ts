@@ -5,16 +5,20 @@
  *
  *   bun run gen            # interactive
  *   bun run gen --dry-run  # show the diff without writing
+ *   bun run gen --routes   # list page routes
+ *   bun run gen --rm       # select and remove a page route (--remove also works)
  */
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, relative } from 'node:path'
-import { navGroups } from '../../src/lib/navs'
 import { icons } from '../../src/lib/icons/icons'
-import { apply, isExternal, paths, plan, root, toKebab, toPascal, type FileChange, type GenSpec } from './codegen'
+import { navGroups } from '../../src/lib/navs'
+import { apply, isExternal, listRoutes, paths, plan, planRemovePage, root, toKebab, toPascal, type FileChange, type GenSpec } from './codegen'
 import { CancelError, colors as c, confirm, select, text } from './prompts'
 
 const dryRun = process.argv.includes('--dry-run')
+const removeMode = process.argv.includes('--rm') || process.argv.includes('--remove')
+const routesMode = process.argv.includes('--routes')
 const NEW_GROUP = Symbol('new-group')
 
 const allItems = navGroups.flatMap((g) => g.items)
@@ -24,21 +28,53 @@ const routePaths = [...routerSrc.matchAll(/path:\s*['"]([^'"]+)['"]/g)].map((m) 
 const pageExports = (/export\s*\{([^}]*)\}/.exec(pagesSrc)?.[1] ?? '').split(',').map((s) => s.trim())
 
 async function main() {
+  if (removeMode && routesMode) throw new Error('Use either --routes or --rm/--remove')
   console.log(
     `\n${c.bold('beast-dashboard')} ${c.dim('· nav + route generator')}${dryRun ? c.yellow(' (dry run)') : ''}\n`
   )
 
+  if (routesMode) {
+    for (const route of listRoutes(routerSrc))
+      console.log(`  ${c.cyan(route.path.padEnd(22))} ${route.component ?? c.dim('(custom route)')}`)
+    console.log()
+    return
+  }
+
+  if (removeMode) {
+    const routes = listRoutes(routerSrc).filter((route) => route.component)
+    if (!routes.length) throw new Error('No removable page routes found in router.ts')
+    const path = await select({
+      message: 'Which page route do you want to remove?',
+      choices: routes.map((route) => ({ label: route.path, value: route.path, hint: route.component ?? undefined }))
+    })
+    const changes = planRemovePage(path)
+    console.log()
+    printDiff(changes)
+    if (dryRun) {
+      console.log(c.yellow('Dry run — no files written.\n'))
+      return
+    }
+    if (!(await confirm({ message: `Remove ${path} and update ${changes.length} file(s)?`, initial: false }))) {
+      console.log(c.dim('Nothing written.\n'))
+      return
+    }
+    apply(changes)
+    printChanges(changes)
+    console.log(`\n${c.green('Done.')} Removed ${c.bold(path)}.\n`)
+    return
+  }
+
   const kind = await select({
     message: 'What are you adding?',
     choices: [
-      { label: 'Page', value: 'page' as const, hint: 'nav item + route + page component' },
-      { label: 'External link', value: 'link' as const, hint: 'nav item only' }
+      { label: 'Page', value: 'page' as const, hint: '⤍  within the app' },
+      { label: 'Link', value: 'link' as const, hint: '⤍  to another site' }
     ]
   })
 
   const label = await text({
     message: 'Label',
-    placeholder: kind === 'page' ? 'e.g. Settings' : 'e.g. GitHub',
+    placeholder: kind === 'page' ? '_ ' : '_ ',
     validate: (v) => (v ? undefined : 'Label is required')
   })
 
@@ -129,10 +165,16 @@ async function main() {
     return
   }
   apply(changes)
-  console.log()
-  for (const ch of changes)
-    console.log(`  ${ch.before === null ? c.green('create') : c.cyan('update')} ${relative(root, ch.path)}`)
+  printChanges(changes)
   console.log(`\n${c.green('Done.')}${page ? ` Visit ${c.bold(href)} in the dev server.` : ''}\n`)
+}
+
+function printChanges(changes: FileChange[]) {
+  console.log()
+  for (const ch of changes) {
+    const verb = ch.after === null ? c.red('delete') : ch.before === null ? c.green('create') : c.cyan('update')
+    console.log(`  ${verb} ${relative(root, ch.path)}`)
+  }
 }
 
 function printDiff(changes: FileChange[]) {
@@ -142,10 +184,11 @@ function printDiff(changes: FileChange[]) {
       const a = join(dir, `${i}.a`)
       const b = join(dir, `${i}.b`)
       writeFileSync(a, ch.before ?? '')
-      writeFileSync(b, ch.after)
+      writeFileSync(b, ch.after ?? '')
       const { stdout } = Bun.spawnSync(['git', 'diff', '--no-index', '--color=always', '--no-prefix', a, b])
       const body = stdout.toString().split('\n').slice(4).join('\n') // drop git's temp-file header
-      console.log(`${c.bold(relative(root, ch.path))} ${ch.before === null ? c.green('(new)') : ''}`)
+      const state = ch.after === null ? c.red('(delete)') : ch.before === null ? c.green('(new)') : ''
+      console.log(`${c.bold(relative(root, ch.path))} ${state}`)
       console.log(body.trimEnd() + '\n')
     }
   } finally {

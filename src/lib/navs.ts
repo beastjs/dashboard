@@ -46,13 +46,13 @@ export const navGroups: NavGroup[] = [
         tags: ['projects']
       },
       {
-        href: '/settings',
-        icon: 'mechanics',
-        label: 'Settings',
-        title: 'Settings',
-        description: 'My Settings',
+        href: '/deck-builder',
+        icon: 'sidebar',
+        label: 'Deck Builder',
+        title: 'Deck Builder',
+        description: 'My Deck Builder',
         value: '00',
-        tags: ['settings']
+        tags: ['deck builder']
       }
     ]
   },

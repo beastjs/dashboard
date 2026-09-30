@@ -107,7 +107,13 @@ export type SelectOptions<T> = {
   filterable?: boolean
 }
 
-export function select<T>({ message, choices, initial = 0, pageSize = 8, filterable = false }: SelectOptions<T>): Promise<T> {
+export function select<T>({
+  message,
+  choices,
+  initial = 0,
+  pageSize = 8,
+  filterable = false
+}: SelectOptions<T>): Promise<T> {
   let query = ''
   let cursor = initial
   let offset = 0
@@ -123,7 +129,7 @@ export function select<T>({ message, choices, initial = 0, pageSize = 8, filtera
       if (cursor >= offset + pageSize) offset = cursor - pageSize + 1
       offset = Math.max(0, Math.min(offset, Math.max(0, list.length - pageSize)))
 
-      const help = filterable ? (query ? `filter: ${query}` : 'type to filter') : '↑/↓ or ^P/^N to move, enter to select'
+      const help = filterable ? (query ? `filter: ${query}` : 'type to filter') : '↩'
       const out = [`${c.cyan('?')} ${c.bold(message)} ${c.dim(help)}`]
       if (!list.length) out.push(c.dim('  no matches'))
       list.slice(offset, offset + pageSize).forEach((ch, i) => {
@@ -153,7 +159,9 @@ export function select<T>({ message, choices, initial = 0, pageSize = 8, filtera
 export function confirm({ message, initial = true }: { message: string; initial?: boolean }): Promise<boolean> {
   let value = initial
   return run<boolean>(
-    () => [`${c.cyan('?')} ${c.bold(message)} ${value ? c.cyan(c.bold('Yes')) + ' / No' : 'Yes / ' + c.cyan(c.bold('No'))}`],
+    () => [
+      `${c.cyan('?')} ${c.bold(message)} ${value ? c.cyan(c.bold('Yes')) + ' / No' : 'Yes / ' + c.cyan(c.bold('No'))}`
+    ],
     (input, key, done) => {
       if (key.name === 'return' || key.name === 'enter') done(value)
       else if (['left', 'right', 'tab'].includes(key.name ?? '')) value = !value
