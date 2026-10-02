@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import {Icon, type IconName} from "@/lib/icons"
 import { navGroups } from "@/lib/navs"
 import { Link } from "@octanejs/tanstack-router"
-import { createElement, useRef, useLayoutEffect, useState } from "octane"
+import { createElement, useRef, useLayoutEffect } from "octane"
 import FluidTooltip, { FluidTooltipContent, FluidTooltipRoot, FluidTooltipTrigger } from "@/components/ui/FluidTooltip.btsx"
 
 module
@@ -15,15 +15,15 @@ module
     label: string
     value?: string | number
     path?: string
-    onHover?: VoidFunction
+    onHover?: (event: MouseEvent) => void
     isCompact?: boolean
     // onNavigate: (to: string) => (event: MouseEvent) => void
   }
 
   const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] border-t border-sidebar-border overflow-hidden"
-  const SIDEBAR_ITEM_CLASS = "flex w-full items-center gap-1.75 rounded-[12px] border py-1.75 pl-1.75 text-left transition-all duration-200 ease-out"
-  const SIDEBAR_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-[inset_0_1px_0_#FFFFFF10,0_3px_3px_-1px_#00000026,0_0_0_1px_#04040460] dark:hover:brightness-115 hover:brightness-102 border-border/0"
-  const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-background dark:bg-transparent hover:bg-sidebar/0 dark:hover:bg-sidebar-border/50"
+  const SIDEBAR_ITEM_CLASS = "relative z-10 flex w-full items-center gap-1.75 rounded-[12px] border py-1.75 pl-1.75 text-left"
+  const SIDEBAR_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-[inset_0_1px_0_#FFFFFF10,0_3px_3px_-1px_#00000026,0_0_0_1px_#04040460] border-border/0"
+  const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-transparent"
   const SIDEBAR_ICON_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-transparent"
   const SIDEBAR_ICON_SELECTED_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] light:bg-background"
   const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground/90"
@@ -45,8 +45,8 @@ component SidebarItem
     const iconContainerClassName = isSelected ? cn(SIDEBAR_ICON_SELECTED_CONTAINER_CLASS, isCompact && "bg-transparent dark:bg-transparent shadow-none") : SIDEBAR_ICON_CONTAINER_CLASS
     const compactLink = isCompact
       ? isExternal
-        ? createElement("a", { href, className: itemClassName, target: "_blank", rel: "noopener noreferrer" })
-        : createElement(Link, { to: href, className: itemClassName, "aria-current": isSelected ? "page" : undefined })
+        ? createElement("a", { href, className: itemClassName, target: "_blank", rel: "noopener noreferrer", onMouseEnter: onHover })
+        : createElement(Link, { to: href, className: itemClassName, "aria-current": isSelected ? "page" : undefined, onMouseEnter: onHover })
       : undefined
 
   if isCompact
@@ -59,7 +59,7 @@ component SidebarItem
       FluidTooltipContent #{label}
   else
     if isExternal
-      a(href={href} className={itemClassName} target="_blank" rel="noopener noreferrer")
+      a(href={href} className={itemClassName} target="_blank" rel="noopener noreferrer" onMouseEnter={onHover})
         div(className={iconContainerClassName})
           Icon(name={icon} size={18} className={iconClassName})
         span(className={labelClassName}) #{label}
@@ -73,34 +73,42 @@ component SidebarItem
 component SidebarNav
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
   setup
-    const [hoveredId, setHoveredId] = useState('')
-    const navlistRef = useRef<HTMLElement | null>(null)
+    const navlistRef = useRef<HTMLDivElement | null>(null)
+    const hoveredItemRef = useRef<HTMLElement | null>(null)
+
+    const updateIndicator = () => {
+      const navlist = navlistRef.current
+      const item = hoveredItemRef.current
+      if (!navlist || !item) return
+
+      const containerRect = navlist.getBoundingClientRect()
+      const itemRect = item.getBoundingClientRect()
+      navlist.style.setProperty('--hovered-nav-top', `${itemRect.top - containerRect.top + navlist.scrollTop}px`)
+      navlist.style.setProperty('--hovered-nav-left', `${itemRect.left - containerRect.left + navlist.scrollLeft}px`)
+      navlist.style.setProperty('--hovered-nav-height', `${itemRect.height}px`)
+      navlist.style.setProperty('--hovered-nav-width', `${itemRect.width}px`)
+    }
+
+    const handleHover = (event: MouseEvent) => {
+      hoveredItemRef.current = event.currentTarget as HTMLElement
+      updateIndicator()
+      navlistRef.current?.style.setProperty('--hovered-nav-opacity', '1')
+    }
+
+    const clearHover = () => {
+      hoveredItemRef.current = null
+      navlistRef.current?.style.setProperty('--hovered-nav-opacity', '0')
+    }
 
     useLayoutEffect(() => {
       const navlist = navlistRef.current
       if (!navlist) return
-
-      const updateIndicator = () => {
-        const hoveredNav = navlist.querySelector<HTMLAnchorElement>('[aria-current="page"]')
-        if (!hoveredNav) return
-
-        navlist.style.setProperty('--hovered-nav-top', `${hoveredNav.offsetTop}px`)
-        // navlist.style.setProperty('--hovered-nav-he', `${hoveredNav.offsetWidth}px`)
-      }
-
-      updateIndicator()
-
       const resizeObserver = new ResizeObserver(updateIndicator)
       resizeObserver.observe(navlist)
-      window.addEventListener('resize', updateIndicator)
+      return () => resizeObserver.disconnect()
+    }, [])
 
-      return () => {
-        resizeObserver.disconnect()
-        window.removeEventListener('resize', updateIndicator)
-      }
-    }, [hoveredId])
-
-  div(className={cn("mt-2 py-4 px-1 space-y-6", className)})
+  div(ref={navlistRef} className={cn("relative isolate mt-2 py-4 px-1 space-y-6", className)} onMouseLeave={clearHover})
     each group in navGroups
       div(key={group.title})
         if isCompact
@@ -109,12 +117,12 @@ component SidebarNav
           div(className="font-medium text-xs tracking-wider opacity-50 uppercase ps-4 mb-1") #{group.title}
         nav(className="space-y-1 px-1 py-2 relative " aria-label={group.title})
           each item in group.items key item.href
-            SidebarItem({...item} path={path} isCompact={isCompact} onHover={() => setHoveredId(item.href)})
-          div(
-            ~ aria-hidden='true'
-            ~ className='pointer-events-none absolute left-0 w-full z-0 py-1.75 rounded-full -translate-x-1/2 bg-sidebar-border transition-[height,transform] duration-180 ease-out'
-            ~ style={{ height: '_var(-hovered-nav-width, 0px)', transform: 'translateY(var(--hovered-nav-top, 0px)) translateX(-50%)' }}
-            ~ )
+            SidebarItem({...item} path={path} isCompact={isCompact} onHover={handleHover})
+    div(
+      ~ aria-hidden='true'
+      ~ className='pointer-events-none absolute top-0 left-0 z-0 m-0! rounded-[12px] bg-sidebar-border/40 transition-[transform,width,height,opacity] duration-200 ease-out motion-reduce:transition-none shadow-none'
+      ~ style={{ width: 'var(--hovered-nav-width, 0px)', height: 'var(--hovered-nav-height, 0px)', opacity: 'var(--hovered-nav-opacity, 0)', transform: 'translate3d(var(--hovered-nav-left, 0px), var(--hovered-nav-top, 0px), 0)' }}
+      ~ )
 
 component SidebarNavTooltips
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
@@ -126,7 +134,7 @@ component SidebarNavTooltips
 
 props { path, isCompact = false }: { path: string; isCompact?: boolean }
 aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
-  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-scroll")
+  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden")
 
   div(className=" shrink-0")
     div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})

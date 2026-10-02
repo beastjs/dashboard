@@ -28,15 +28,6 @@ export const navGroups: NavGroup[] = [
         tags: ['create', 'new file', 'new folder']
       },
       {
-        href: '/documents',
-        icon: 'folder',
-        label: 'Documents',
-        title: 'Docs',
-        description: 'My Documents',
-        value: '02',
-        tags: ['docs', 'files']
-      },
-      {
         href: '/projects',
         icon: 'account',
         label: 'Projects',
