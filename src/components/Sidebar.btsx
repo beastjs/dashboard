@@ -30,9 +30,9 @@ module
   const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-foreground/70 text-base leading-5 tracking-[-0.32px] truncate"
   const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
   const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
-  const SIDEBAR_ITEM_COMPACT_CLASS = "justify-center gap-0 p-1"
+  const SIDEBAR_ITEM_COMPACT_CLASS = "mx-auto size-10 justify-center gap-0 p-1"
 
-  export { SidebarNav }
+  export { SidebarNav, SidebarNavTooltips }
 
 component SidebarItem
   props { href, icon, label, path, isCompact = false, onHover }: SidebarItemProps
@@ -70,7 +70,7 @@ component SidebarItem
         span(className={labelClassName}) #{label}
 
 
-component SidebarNav
+component SidebarNavContent
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
   setup
     const navlistRef = useRef<HTMLDivElement | null>(null)
@@ -112,9 +112,9 @@ component SidebarNav
     each group in navGroups
       div(key={group.title})
         if isCompact
-          div(className="mx-1 mb-2 h-0 bg-border/60" role="presentation")
+          div(className="mx-auto w-6 text-center text-xs font-bold opacity-40" role="presentation") #{group.title.charAt(0)}
         else
-          div(className="font-medium text-xs tracking-wider opacity-50 uppercase ps-4 mb-1") #{group.title}
+          div(className="font-normal text-xs tracking-widest opacity-60 uppercase ps-4 mb-1") #{group.title}
         nav(className="space-y-1 px-1 py-2 relative " aria-label={group.title})
           each item in group.items key item.href
             SidebarItem({...item} path={path} isCompact={isCompact} onHover={handleHover})
@@ -128,9 +128,13 @@ component SidebarNavTooltips
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
   if isCompact
     FluidTooltip(orientation="vertical")
-      SidebarNav(path={path} className={className} isCompact)
+      SidebarNavContent(path={path} className={className} isCompact)
   else
-    SidebarNav(path={path} className={className})
+    SidebarNavContent(path={path} className={className})
+
+component SidebarNav
+  props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
+  SidebarNavTooltips(path={path} className={className} isCompact={isCompact})
 
 props { path, isCompact = false }: { path: string; isCompact?: boolean }
 aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
@@ -140,4 +144,4 @@ aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
     div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})
       div(className="flex-1 min-w-0")
         div(className="text-xs font-medium text-foreground leading-none")
-        div(className={cn("text-2xs font-mono text-muted-foreground px-4", isCompact && "text-center")}) v0.2.62
+        div(className={cn("text-2xs font-mono text-muted-foreground px-4", isCompact && "px-0 text-center")}) v0.2.62

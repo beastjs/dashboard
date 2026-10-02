@@ -38,17 +38,19 @@ component BranchedItem
 
 
 component BranchedNav
-  props { path, className }: { path: string; className?: string }
-  div(className={cn("flex-1 overflow-y-auto p-3", className)})
+  props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
+  div(className={cn("flex-1 min-h-0 overflow-y-auto overflow-x-hidden", isCompact ? "px-2 py-4" : "p-3", className)})
     BranchedMenu(
+      ~ isCompact={isCompact}
+      ~ path={path}
       ~ defaultOpen={[0]}
       ~ defaultActive="quick"
       ~ color="var(--foreground)"
       ~ accentColor="var(--accent)"
       ~ lineColor="var(--line)"
       ~ width={180}
-      ~ rowHeight={36}
-      ~ indent={28}
+      ~ rowHeight={40}
+      ~ indent={24}
       ~ trunk={4}
       ~ radius={4}
       ~ lineWidth={1.5}
@@ -63,11 +65,11 @@ component BranchedNav
     //       each item in group.items key item.href
     //         BranchedItem({...item} path={path})
 
-props { path }: { path: string }
-aside(className={BRANCHED_CLASS})
-  BranchedNav(path={path} className="flex-1 overflow-y-auto min-h-[calc(100dvh-var(--topbar-height))] max-h-[calc(100dvh-var(--topbar-height))]")
+props { path, isCompact = false }: { path: string; isCompact?: boolean }
+aside(className={BRANCHED_CLASS} data-compact={isCompact || undefined})
+  BranchedNav(path={path} isCompact={isCompact})
 
-  div(className="h-10")
+  div(className="h-10 shrink-0")
     div(className="flex items-center h-10 gap-2 px-2-xs bg-background invert")
       div(className="flex-1 min-w-0")
         div(className="text-xs font-medium text-foreground leading-none")

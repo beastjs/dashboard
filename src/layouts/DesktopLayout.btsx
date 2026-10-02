@@ -11,6 +11,7 @@ module
 
 props {}:{}
 setup
+  const [branched, setBranched] = useState(false)
   const path = useLocation({ select: (location) => location.pathname })
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: "app-layout", panelIds: ["sidebar", "content"] })
   const sidebarRef = usePanelRef()
@@ -22,12 +23,16 @@ setup
     if (panel.isCollapsed()) panel.expand()
     else panel.collapse()
   }
+  const toggleBranched = () => setBranched(v => !v)
 fragment
   div(className='hidden md:block sticky top-0 z-40')
-    Topbar(toggleSidebar={toggleCompact} isCompact={isCompact})
+    Topbar(toggleSidebar={toggleCompact} toggleExtra={toggleBranched} isCompact={isCompact})
   Group(orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} className="h-[calc(100dvh-var(--topbar-height))] overflow-hidden")
     Panel(id="sidebar" panelRef={sidebarRef} defaultSize="200px" minSize="200px" maxSize="300px" collapsible collapsedSize="64px" onResize={syncCompact})
-      Branched(path={path})
+      if (branched)
+        SidebarNav(path={path} isCompact={isCompact})
+      else
+        Branched(path={path} isCompact={isCompact})
     Separator(aria-label="Resize sidebar" className={SEPARATOR_CLASS})
     Panel(id="content" minSize="30%")
       div(className='flex h-full min-h-0 flex-col overflow-y-auto')
