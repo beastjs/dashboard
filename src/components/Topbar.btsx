@@ -10,6 +10,7 @@ module
       isCompact?: boolean
     }
   export interface BrandProps {
+    brandName?: string
     imageUrl?: string
     imageAlt?: string
     className?: string
@@ -17,19 +18,20 @@ module
   }
 
 component Brand
-  props { imageUrl, imageAlt = "Web App", className, children }: BrandProps
+  props {brandName='Web app', imageUrl, imageAlt = "Web App", className, children }: BrandProps
   setup
     const BRAND_CLASS = "flex items-center gap-3"
     const BRAND_IMAGE_CLASS = "size-16"
 
 
   div(className={cn(BRAND_CLASS, className)})
-    Link(className="flex items-center gap-4" to="/") App
+    Link(className="flex items-center gap-4" to="/")
+      h1(className='text-xl font-semibold tracking-tighter') #{brandName}
     div #{children}
 
 
 props { toggleSidebar, isCompact = false }: TopbarProps
-header(className="sticky top-0 z-40 backdrop-blur-3xl w-full")
+header(className="sticky top-0 z-40 backdrop-blur-3xl w-full border-b border-sidebar-border")
   div(className="topbar w-full px-5 flex items-center justify-between gap-4")
     Brand
       div(className="hidden md:flex items-center")

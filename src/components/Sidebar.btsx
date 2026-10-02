@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import {Icon, type IconName} from "@/lib/icons"
 import { navGroups } from "@/lib/navs"
 import { Link } from "@octanejs/tanstack-router"
-import { createElement } from "octane"
+import { createElement, useRef, useLayoutEffect, useState } from "octane"
 import FluidTooltip, { FluidTooltipContent, FluidTooltipRoot, FluidTooltipTrigger } from "@/components/ui/FluidTooltip.btsx"
 
 module
@@ -13,20 +13,21 @@ module
     href: string
     icon: IconName
     label: string
-    value: string | number
+    value?: string | number
     path?: string
+    onHover?: VoidFunction
     isCompact?: boolean
     // onNavigate: (to: string) => (event: MouseEvent) => void
   }
 
-  const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] border-t-[0.4px] border-border/40 overflow-hidden"
-  const SIDEBAR_ITEM_CLASS = "flex w-full items-center gap-1.75 rounded-[12px] border py-1 pl-1 pr-[8px] text-left transition-all duration-200 ease-out"
-  const SIDEBAR_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-[inset_0_1px_0_#FFFFFF30,0_3px_3px_-1px_#00000026,0_0_0_1px_#04040460] dark:hover:brightness-115 hover:brightness-102 border-border/0"
-  const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-background dark:bg-transparent hover:bg-sidebar/70 dark:hover:bg-sidebar"
+  const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] border-t border-sidebar-border overflow-hidden"
+  const SIDEBAR_ITEM_CLASS = "flex w-full items-center gap-1.75 rounded-[12px] border py-1.75 pl-1.75 text-left transition-all duration-200 ease-out"
+  const SIDEBAR_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-[inset_0_1px_0_#FFFFFF10,0_3px_3px_-1px_#00000026,0_0_0_1px_#04040460] dark:hover:brightness-115 hover:brightness-102 border-border/0"
+  const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-background dark:bg-transparent hover:bg-sidebar/0 dark:hover:bg-sidebar-border/50"
   const SIDEBAR_ICON_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-transparent"
-  const SIDEBAR_ICON_SELECTED_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] light:bg-background dark:bg-background/50 light:shadow-[0_0_4px_rgba(0,0,0,0.2)]"
+  const SIDEBAR_ICON_SELECTED_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] light:bg-background"
   const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground/90"
-  const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-foreground/80 text-base leading-5 tracking-[-0.24px] truncate"
+  const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-foreground/70 text-base leading-5 tracking-[-0.32px] truncate"
   const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
   const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
   const SIDEBAR_ITEM_COMPACT_CLASS = "justify-center gap-0 p-1"
@@ -34,7 +35,7 @@ module
   export { SidebarNav }
 
 component SidebarItem
-  props { href, icon, label, path, isCompact = false }: SidebarItemProps
+  props { href, icon, label, path, isCompact = false, onHover }: SidebarItemProps
   setup
     const isExternal = href.startsWith("http")
     const isSelected = path === href
@@ -60,10 +61,10 @@ component SidebarItem
     if isExternal
       a(href={href} className={itemClassName} target="_blank" rel="noopener noreferrer")
         div(className={iconContainerClassName})
-          Icon(name={icon} size={18} className={SIDEBAR_ICON_CLASS})
-        span(className={SIDEBAR_LABEL_CLASS}) #{label}
+          Icon(name={icon} size={18} className={iconClassName})
+        span(className={labelClassName}) #{label}
     else
-      Link(to={href} className={itemClassName} aria-current={isSelected ? "page" : undefined})
+      Link(to={href} className={itemClassName} aria-current={isSelected ? "page" : undefined} onMouseEnter={onHover})
         div(className={iconContainerClassName})
           Icon(name={icon} size={18} className={iconClassName})
         span(className={labelClassName}) #{label}
@@ -71,16 +72,49 @@ component SidebarItem
 
 component SidebarNav
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
-  div(className={cn("p-3 space-y-6", className)})
+  setup
+    const [hoveredId, setHoveredId] = useState('')
+    const navlistRef = useRef<HTMLElement | null>(null)
+
+    useLayoutEffect(() => {
+      const navlist = navlistRef.current
+      if (!navlist) return
+
+      const updateIndicator = () => {
+        const hoveredNav = navlist.querySelector<HTMLAnchorElement>('[aria-current="page"]')
+        if (!hoveredNav) return
+
+        navlist.style.setProperty('--hovered-nav-top', `${hoveredNav.offsetTop}px`)
+        // navlist.style.setProperty('--hovered-nav-he', `${hoveredNav.offsetWidth}px`)
+      }
+
+      updateIndicator()
+
+      const resizeObserver = new ResizeObserver(updateIndicator)
+      resizeObserver.observe(navlist)
+      window.addEventListener('resize', updateIndicator)
+
+      return () => {
+        resizeObserver.disconnect()
+        window.removeEventListener('resize', updateIndicator)
+      }
+    }, [hoveredId])
+
+  div(className={cn("mt-2 py-4 px-1 space-y-6", className)})
     each group in navGroups
       div(key={group.title})
         if isCompact
-          div(className="mx-2 mb-2 h-0 bg-border/60" role="presentation")
+          div(className="mx-1 mb-2 h-0 bg-border/60" role="presentation")
         else
-          div(className="text-xs tracking-wider opacity-60 uppercase px-2 mb-2") #{group.title}
-        nav(className="space-y-1 overflow-hidden" aria-label={group.title})
+          div(className="font-medium text-xs tracking-wider opacity-50 uppercase ps-4 mb-1") #{group.title}
+        nav(className="space-y-1 px-1 py-2 relative " aria-label={group.title})
           each item in group.items key item.href
-            SidebarItem({...item} path={path} isCompact={isCompact})
+            SidebarItem({...item} path={path} isCompact={isCompact} onHover={() => setHoveredId(item.href)})
+          div(
+            ~ aria-hidden='true'
+            ~ className='pointer-events-none absolute left-0 w-full z-0 py-1.75 rounded-full -translate-x-1/2 bg-sidebar-border transition-[height,transform] duration-180 ease-out'
+            ~ style={{ height: '_var(-hovered-nav-width, 0px)', transform: 'translateY(var(--hovered-nav-top, 0px)) translateX(-50%)' }}
+            ~ )
 
 component SidebarNavTooltips
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
@@ -92,7 +126,7 @@ component SidebarNavTooltips
 
 props { path, isCompact = false }: { path: string; isCompact?: boolean }
 aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
-  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-hidden!")
+  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 overflow-scroll")
 
   div(className=" shrink-0")
     div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})
