@@ -71,3 +71,21 @@ export const navGroups: NavGroup[] = [
     ]
   }
 ]
+
+export const branches = [
+  {
+    label: 'Getting started',
+    children: [
+      { value: 'install', label: 'Installation', icon: 'settings' },
+      { value: 'quick', label: 'Quick start', icon: 'settings' },
+      { value: 'config', label: 'Configuration', icon: 'settings' }
+    ]
+  },
+  {
+    label: 'Components',
+    children: [
+      { value: 'buttons', label: 'Buttons' },
+      { value: 'overlays', label: 'Overlays' }
+    ]
+  }
+]

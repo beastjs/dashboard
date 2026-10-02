@@ -15,7 +15,9 @@
 .trellis [data-trellis-part='divider']::after {
   content: '';
   transform: scaleY(0.6);
-  transition: opacity 180ms ease, transform 260ms var(--bdt-ease-out);
+  transition:
+    opacity 180ms ease,
+    transform 260ms var(--bdt-ease-out);
 }
 
 .trellis [data-trellis-part='divider']:is(:hover, :focus-visible, [data-active])::after {
@@ -47,6 +49,9 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
+  --color-line: var(--line);
+  --color-focus: var(--focus);
+  --color-accent: var(--accent);
   --color-chart-5: var(--chart-5);
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
@@ -114,7 +119,6 @@
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.95 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --input: oklch(0.72 0 0);
@@ -132,6 +136,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --line: oklch(0.88 0 0);
+  --accent: oklch(0.6161 0.2094 256.24);
+  --focus: oklch(0.839 0.12 73.67);
   --destructive-foreground: var(--color-red-800);
   --success: var(--color-emerald-500);
   --success-foreground: var(--color-emerald-900);
@@ -146,8 +153,8 @@
 .dark {
   color-scheme: dark;
   --soft: oklch(0.9461 0 0 / 50%);
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  --background: oklch(0.1638 0 0);
+  --foreground: oklch(0.9547 0.02 222.79);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -177,6 +184,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --line: oklch(0.3052 0 0);
+  --accent: oklch(0.6161 0.2094 256.24);
+  --focus: oklch(0.839 0.12 73.67);
   --destructive-foreground: var(--color-red-600);
   --success: var(--color-emerald-500);
   --success-foreground: var(--color-emerald-600);
