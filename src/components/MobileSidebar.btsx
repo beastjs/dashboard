@@ -48,7 +48,7 @@ Drawer(
   ~ description='Swipe right or use the close button to close navigation.'
   ~ trigger={trigger}
   ~ className={cn('will-change-transform rounded-l-xl', className)}
-  ~ contentClassName='bg-inherit backdrop-blur-sm relative'
+  ~ contentClassName='bg-background relative'
   ~ backdropClassName='bg-black/20! backdrop-blur-none!'
   ~ )
   div(className='absolute -right-48 -top-64 size-152 rounded-full bg-beach/8 blur-3xl dark:bg-lime-200/3 pointer-events-none')

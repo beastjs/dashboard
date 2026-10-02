@@ -4,7 +4,6 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import Shell from "./Shell.btsx";
 
 module
-  // Each viewport only downloads its own shell: resizable panels + tooltips on desktop, the drawer on mobile.
   const DesktopLayout = lazy(() => import("@/layouts/DesktopLayout.btsx"))
   const MobileLayout = lazy(() => import("@/layouts/MobileLayout.btsx"))
 

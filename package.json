@@ -12,6 +12,7 @@
     "gen": "bun scripts/gen/index.ts"
   },
   "dependencies": {
+    "@beastjs/devtools": "^0.1.13",
     "@danfessler/trellis": "^0.3.0",
     "@octanejs/resizable-panels": "^0.0.13",
     "@octanejs/shadcn": "0.0.44",
