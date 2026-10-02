@@ -12,7 +12,7 @@ module
     nested?: boolean
   }
 
-  const BRANCHED_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] bg-surface dark:bg-background/80 border-t-[0.5px] border-sidebar-border overflow-hidden"
+  const BRANCHED_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] bg-surface dark:bg-background/80 overflow-hidden"
   const BRANCHED_ITEM_CLASS = "flex w-full items-center gap-1.75 rounded-[10px] border h-[36px] px-3 text-left transition-all duration-200 ease-out"
   const BRANCHED_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-none dark:hover:brightness-115 hover:brightness-102 border-border/0"
   const BRANCHED_ITEM_DEFAULT_CLASS = "border-transparent bg-surface dark:bg-transparent hover:bg-Branched/70 dark:hover:bg-Branched"
@@ -70,6 +70,6 @@ aside(className={BRANCHED_CLASS} data-compact={isCompact || undefined})
   BranchedNav(path={path} isCompact={isCompact})
 
   div(className="h-10 shrink-0")
-    div(className="flex items-center h-10 gap-2 px-2-xs bg-background invert")
+    div(className="flex items-center h-10 gap-2 px-2-xs")
       div(className="flex-1 min-w-0")
-        div(className="text-xs font-medium text-foreground leading-none")
+        div(className={cn("text-xs font-medium text-foreground leading-none px-4 text-left", {'text-center': isCompact})}) xx

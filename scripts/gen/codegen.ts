@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs'
 import { join, resolve } from 'node:path'
+import type { NavGroup, NavItem } from '../../src/lib/navs'
 
 export const root = resolve(import.meta.dirname, '../..')
 export const paths = {
@@ -9,19 +10,12 @@ export const paths = {
   page: (name: string) => join(root, `src/pages/${name}.btsx`)
 }
 
-export type NavSpec = {
-  href: string
-  icon: string
-  label: string
-  title: string
-  description: string
-  value: string
-  tags: string[]
-}
+export type NavSpec = NavItem
 
 export type GenSpec = {
   group: string
   newGroup: boolean
+  groupLabel?: NavGroup['label']
   nav: NavSpec
   /** null for external links: no page or route is generated */
   page: { component: string; createFile: boolean } | null
@@ -53,7 +47,7 @@ export const isExternal = (href: string) => /^[a-z][a-z0-9+.-]*:/i.test(href)
 
 // ── source helpers ──────────────────────────────────────────────────────────
 
-const q = (s: string) => `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`
+const q = (s: string) => `'${s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r/g, '\\r').replace(/\n/g, '\\n')}'`
 const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /** Index of the bracket that closes the one at `open`, skipping string literals. */
@@ -188,8 +182,9 @@ export function renderNavItem(nav: NavSpec): string {
     `  href: ${q(nav.href)},`,
     `  icon: ${q(nav.icon)},`,
     `  label: ${q(nav.label)},`,
-    `  title: ${q(nav.title)},`,
-    `  description: ${q(nav.description)},`,
+    ...(nav.short !== undefined ? [`  short: ${q(nav.short)},`] : []),
+    ...(nav.description !== undefined ? [`  description: ${q(nav.description)},`] : []),
+    ...(nav.disabled !== undefined ? [`  disabled: ${nav.disabled},`] : []),
     `  value: ${q(nav.value)},`,
     `  tags: [${nav.tags.map(q).join(', ')}]`,
     '}'
@@ -202,14 +197,21 @@ export function updateNavs(src: string, spec: GenSpec): string {
   if (!declaration || declaration.index === undefined) throw new Error('Could not find `navGroups` in navs.ts')
 
   if (spec.newGroup) {
-    const group = `{\n  title: ${q(spec.group)},\n  items: [\n    ${indentBlock(item, '    ')}\n  ]\n}`
+    const groupLabel = spec.groupLabel !== undefined ? `\n  label: ${q(spec.groupLabel)},` : ''
+    const group = `{\n  title: ${q(spec.group)},${groupLabel}\n  items: [\n    ${indentBlock(item, '    ')}\n  ]\n}`
     return appendToArray(src, declaration.index + declaration[0].length - 1, indentBlock(group, '  '), '  ')
   }
 
-  const re = new RegExp(`title:\\s*(['"])${escapeRe(spec.group)}\\1\\s*,\\s*items:\\s*\\[`)
-  const match = re.exec(src)
-  if (!match) throw new Error(`Could not find nav group "${spec.group}" in navs.ts`)
-  return appendToArray(src, match.index + match[0].length - 1, indentBlock(item, '      '), '      ')
+  const groups = arrayObjects(src, declaration.index + declaration[0].length - 1)
+  const title = new RegExp(`\\btitle:\\s*(['"])${escapeRe(spec.group)}\\1`)
+  for (const group of groups) {
+    const body = src.slice(group.start, group.end + 1)
+    if (!title.test(body)) continue
+    const items = /\bitems:\s*\[/.exec(body)
+    if (!items) throw new Error(`Could not find items in nav group "${spec.group}"`)
+    return appendToArray(src, group.start + items.index + items[0].length - 1, indentBlock(item, '      '), '      ')
+  }
+  throw new Error(`Could not find nav group "${spec.group}" in navs.ts`)
 }
 
 export function updateRouter(src: string, component: string, path: string): string {

@@ -42,7 +42,6 @@ header(className="sticky top-0 z-40 backdrop-blur-3xl w-full border-b-[0.5px] bo
         button(className="size-6 aspect-square place-items-center text-input hover:text-foreground/75" onClick={toggleSidebar} aria-label={isCompact ? "Expand sidebar" : "Compact sidebar"} aria-pressed={isCompact} title={isCompact ? "Expand sidebar" : "Compact sidebar"})
           Icon(name='sidebar' className="size-5")
     div(className="flex items-center gap-2")
-      Button(onClick={toggleExtra}) T
+      Button(onClick={toggleExtra} className='size-6') T
       ThemeToggle
-      Button(label="Docs" variant='default' size="sm" type='a' href='https://beast-docs.vercel.app' target="_blank" rel="noopener noreferrer" className="hidden md:flex")
       | #{children}

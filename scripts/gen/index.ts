@@ -110,8 +110,11 @@ async function main() {
           !v ? 'Title is required' : navGroups.some((g) => g.title === v) ? 'Group already exists' : undefined
       })
     : (groupChoice as string)
+  const groupLabel = newGroup
+    ? await text({ message: 'Group label (optional)' })
+    : undefined
 
-  const iconNames = Object.keys(icons)
+  const iconNames = Object.keys(icons) as (keyof typeof icons)[]
   const icon = await select({
     message: 'Icon',
     choices: iconNames.map((name) => ({ label: name, value: name })),
@@ -119,9 +122,14 @@ async function main() {
     filterable: true
   })
 
-  const title = await text({ message: 'Title', initial: label })
+  const short = await text({ message: 'Short label (optional)', initial: label })
   const description = await text({ message: 'Description', initial: kind === 'page' ? `My ${label}` : '' })
-  const value = await text({ message: 'Value (badge)', initial: kind === 'page' ? '00' : '↗' })
+  const value = await text({
+    message: 'Value (unique identifier)',
+    initial: toKebab(label),
+    validate: (v) => !v ? 'Value is required' : allItems.some((item) => item.value === v) ? 'Value already exists' : undefined
+  })
+  const disabled = await confirm({ message: 'Disable this nav item?', initial: false })
   const tags = (await text({ message: 'Tags (comma separated)', initial: label.toLowerCase() }))
     .split(',')
     .map((t) => t.trim())
@@ -148,7 +156,8 @@ async function main() {
   const spec: GenSpec = {
     group,
     newGroup,
-    nav: { href, icon, label, title, description, value, tags: tags.length ? tags : [''] },
+    ...(groupLabel ? { groupLabel } : {}),
+    nav: { href, icon, label, ...(short ? { short } : {}), ...(description ? { description } : {}), ...(disabled ? { disabled } : {}), value, tags },
     page
   }
   const changes = plan(spec)

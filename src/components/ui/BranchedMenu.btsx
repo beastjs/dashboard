@@ -117,7 +117,7 @@ setup
     return () => ro.disconnect();
   }, [activeSection, markerShown, items, fontSize, rowHeight, isCompact]);
 
-  const select = (value: string | number, item: NavItem | NavGroup ) => {
+  const select = (value: string, item: NavItem | NavGroup ) => {
     setActive(value);
     latest.current.onSelect?.(value, item);
   };

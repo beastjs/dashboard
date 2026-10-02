@@ -20,8 +20,8 @@ module
     // onNavigate: (to: string) => (event: MouseEvent) => void
   }
 
-  const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-[calc(100dvh-var(--topbar-height))] border-t border-sidebar-border overflow-hidden"
-  const SIDEBAR_ITEM_CLASS = "relative z-10 flex w-full items-center gap-1.75 rounded-[12px] border py-1.75 pl-1.75 text-left"
+  const SIDEBAR_CLASS = "hidden md:flex flex-col w-full h-full min-h-0 bg-surface dark:bg-background/80 overflow-hidden"
+  const SIDEBAR_ITEM_CLASS = "relative z-10 flex w-full items-center gap-1.75 rounded-[10px] border py-1.75 pl-1.75 text-left focus-visible:ring-2 focus-visible:ring-focus"
   const SIDEBAR_ITEM_SELECTED_CLASS = "bg-[linear-gradient(in_oklab_180deg,oklab(95.2%_0_0)_0%,oklab(91.3%_0_0)_100%)] shadow-[inset_0_1px_0_#FFFFFF54,0_2.5px_3.5px_-1px_#00000026,0_0_0_1px_#D4D4D4] bg-origin-border dark:bg-[linear-gradient(in_oklab_180deg,oklab(32%_0_0)_0%,oklab(25%_0_0)_100%)] dark:shadow-[inset_0_1px_0_#FFFFFF10,0_3px_3px_-1px_#00000026,0_0_0_1px_#04040460] border-border/0"
   const SIDEBAR_ITEM_DEFAULT_CLASS = "border-transparent bg-transparent"
   const SIDEBAR_ICON_CONTAINER_CLASS = "flex size-7.5 shrink-0 items-center justify-center rounded-[8px] bg-transparent"
@@ -29,7 +29,7 @@ module
   const SIDEBAR_ICON_CLASS = "m-0 text-muted-foreground/90"
   const SIDEBAR_LABEL_CLASS = "flex-1 font-sans font-medium text-foreground/70 text-base leading-5 tracking-[-0.32px] truncate"
   const SIDEBAR_VALUE_CLASS = "ml-auto shrink-0 text-right font-mono text-2xs leading-none tabular-nums text-muted-foreground"
-  const SIDEBAR_SELECTED_TEXT_CLASS = "text-primary"
+  const SIDEBAR_SELECTED_TEXT_CLASS = "text-foreground"
   const SIDEBAR_ITEM_COMPACT_CLASS = "mx-auto size-10 justify-center gap-0 p-1"
 
   export { SidebarNav, SidebarNavTooltips }
@@ -108,19 +108,19 @@ component SidebarNavContent
       return () => resizeObserver.disconnect()
     }, [])
 
-  div(ref={navlistRef} className={cn("relative isolate mt-2 py-4 px-1 space-y-6", className)} onMouseLeave={clearHover})
+  div(ref={navlistRef} className={cn("h-full relative isolate mt-2 py-4 px-1 space-y-6", className)} onMouseLeave={clearHover})
     each group in navGroups
       div(key={group.title})
         if isCompact
           div(className="mx-auto w-6 text-center text-xs font-bold opacity-40" role="presentation") #{group.title.charAt(0)}
         else
-          div(className="font-normal text-xs tracking-widest opacity-60 uppercase ps-4 mb-1") #{group.title}
+          div(className="font-normal text-xs tracking-widest opacity-50 uppercase ps-4 mb-1") #{group.title}
         nav(className="space-y-1 px-1 py-2 relative " aria-label={group.title})
           each item in group.items key item.href
             SidebarItem({...item} path={path} isCompact={isCompact} onHover={handleHover})
     div(
       ~ aria-hidden='true'
-      ~ className='pointer-events-none absolute top-0 left-0 z-0 m-0! rounded-[12px] bg-sidebar-border/40 transition-[transform,width,height,opacity] duration-200 ease-out motion-reduce:transition-none shadow-none'
+      ~ className='pointer-events-none absolute top-0 left-0 z-0 m-0! rounded-[10px] bg-sidebar-border/40 transition-[transform,width,height,opacity] duration-200 ease-out motion-reduce:transition-none shadow-none'
       ~ style={{ width: 'var(--hovered-nav-width, 0px)', height: 'var(--hovered-nav-height, 0px)', opacity: 'var(--hovered-nav-opacity, 0)', transform: 'translate3d(var(--hovered-nav-left, 0px), var(--hovered-nav-top, 0px), 0)' }}
       ~ )
 
@@ -134,14 +134,12 @@ component SidebarNavTooltips
 
 component SidebarNav
   props { path, className, isCompact = false }: { path: string; className?: string; isCompact?: boolean }
-  SidebarNavTooltips(path={path} className={className} isCompact={isCompact})
+  SidebarNavTooltips(path={path} className={cn('mt-0 min-h-0 flex-1 overflow-y-auto overflow-x-hidden', className)} isCompact={isCompact})
 
 props { path, isCompact = false }: { path: string; isCompact?: boolean }
 aside(className={SIDEBAR_CLASS} data-compact={isCompact || undefined})
-  SidebarNavTooltips(path={path} isCompact={isCompact} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden")
-
-  div(className=" shrink-0")
-    div(className={cn("flex items-center h-10 gap-2 px-2-xs bg-background invert", isCompact && "justify-center")})
+  SidebarNavTooltips(path={path} isCompact={isCompact} className="mt-0 h-auto min-h-0 flex-1 overflow-y-auto overflow-x-hidden")
+  div(className="h-10 shrink-0 bg-sidebar")
+    div(className="flex items-center h-10 gap-2 px-2-xs")
       div(className="flex-1 min-w-0")
-        div(className="text-xs font-medium text-foreground leading-none")
-        div(className={cn("text-2xs font-mono text-muted-foreground px-4", isCompact && "px-0 text-center")}) v0.2.62
+        div(className={cn("text-xs font-medium text-foreground leading-none px-4 text-left", {'text-center': isCompact})}) xx

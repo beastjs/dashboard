@@ -2,7 +2,7 @@ import { useState } from "octane";
 import { Outlet, useLocation } from "@octanejs/tanstack-router";
 import { Group, Panel, Separator, useDefaultLayout, usePanelRef } from "@octanejs/resizable-panels";
 import Topbar from "@/components/Topbar.btsx";
-import Sidebar, { SidebarNav } from "@/components/Sidebar.btsx";
+import Sidebar from "@/components/Sidebar.btsx";
 import Tr from "@/components/Tr.btsx";
 import Branched from "../components/Branched.btsx";
 
@@ -11,7 +11,7 @@ module
 
 props {}:{}
 setup
-  const [branched, setBranched] = useState(false)
+  const [branched, setBranched] = useState(true)
   const path = useLocation({ select: (location) => location.pathname })
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({ id: "app-layout", panelIds: ["sidebar", "content"] })
   const sidebarRef = usePanelRef()
@@ -27,10 +27,10 @@ setup
 fragment
   div(className='hidden md:block sticky top-0 z-40')
     Topbar(toggleSidebar={toggleCompact} toggleExtra={toggleBranched} isCompact={isCompact})
-  Group(orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} className="h-[calc(100dvh-var(--topbar-height))] overflow-hidden")
+  Group(orientation="horizontal" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged} style={{ height: 'calc(100dvh - var(--topbar-height))' }} className="overflow-hidden")
     Panel(id="sidebar" panelRef={sidebarRef} defaultSize="200px" minSize="200px" maxSize="300px" collapsible collapsedSize="64px" onResize={syncCompact})
       if (branched)
-        SidebarNav(path={path} isCompact={isCompact})
+        Sidebar(path={path} isCompact={isCompact})
       else
         Branched(path={path} isCompact={isCompact})
     Separator(aria-label="Resize sidebar" className={SEPARATOR_CLASS})

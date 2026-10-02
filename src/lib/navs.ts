@@ -46,6 +46,15 @@ export const navGroups: NavGroup[] = [
         description: 'My Deck Builder',
         value: 'deck-builder',
         tags: ['deck builder']
+      },
+      {
+        href: '/highlights',
+        icon: 'mechanics',
+        label: 'Highlights',
+        short: 'Highlights',
+        description: 'My Highlights',
+        value: 'highlights',
+        tags: ['highlights']
       }
     ]
   },

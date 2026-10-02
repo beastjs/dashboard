@@ -1,5 +1,46 @@
 import { expect, test } from 'bun:test'
-import { listRoutes, removeNavRoute, removePagesExport, removeRouterRoute } from './codegen'
+import { listRoutes, removeNavRoute, removePagesExport, removeRouterRoute, renderNavItem, updateNavs, type NavSpec } from './codegen'
+import { readFileSync } from 'node:fs'
+
+const nav: NavSpec = {
+  href: '/settings', icon: 'folder', label: 'Settings', value: 'settings', tags: []
+}
+
+const evaluateNavs = (source: string) => {
+  const js = new Bun.Transpiler({ loader: 'ts' }).transformSync(source)
+    .replace(/^import .*$/gm, '').replace(/\bexport /g, '')
+  return new Function(`${js}\nreturn navGroups`)()
+}
+
+test('renders the current NavItem shape with optional fields omitted or preserved', () => {
+  expect(new Function(`return (${renderNavItem(nav)})`)()).toEqual(nav)
+  const full: NavSpec = { ...nav, short: "It's short\nand readable", description: '', disabled: false }
+  expect(new Function(`return (${renderNavItem(full)})`)()).toEqual(full)
+  expect(new Function(`return (${renderNavItem({ ...nav, disabled: true })})`)().disabled).toBe(true)
+})
+
+test('updates a group with a label between its title and items', () => {
+  const source = `export const navGroups: NavGroup[] = [
+  {
+    title: 'Workspace',
+    label: 'Work',
+    items: []
+  }
+]`
+  const updated = updateNavs(source, { group: 'Workspace', newGroup: false, nav, page: null })
+  expect(evaluateNavs(updated)).toEqual([{ title: 'Workspace', label: 'Work', items: [nav] }])
+})
+
+test('adds a labeled group to the real navigation source without changing existing groups', () => {
+  const source = readFileSync(new URL('../../src/lib/navs.ts', import.meta.url), 'utf8')
+  const before = evaluateNavs(source)
+  const updated = updateNavs(source, { group: 'Tools', groupLabel: 'Utilities', newGroup: true, nav, page: null })
+  expect(evaluateNavs(updated)).toEqual([...before, { title: 'Tools', label: 'Utilities', items: [nav] }])
+  const existing = updateNavs(source, { group: 'Workspace', newGroup: false, nav, page: null })
+  expect(evaluateNavs(existing)).toEqual(before.map((group: { title: string; items: NavSpec[] }) =>
+    group.title === 'Workspace' ? { ...group, items: [...group.items, nav] } : group
+  ))
+})
 
 test('lists and removes a lazy page route', () => {
   const router = `const rootRoute = createRootRoute({ component: App })
