@@ -47,12 +47,12 @@ component BranchedNav
       ~ accentColor="var(--accent)"
       ~ lineColor="var(--line)"
       ~ width={180}
-      ~ rowHeight={32}
+      ~ rowHeight={36}
       ~ indent={28}
       ~ trunk={4}
       ~ radius={4}
       ~ lineWidth={1.5}
-      ~ fontSize={14}
+      ~ fontSize={15}
       ~ drawDuration={400}
       ~ foldDuration={280}
       ~ )

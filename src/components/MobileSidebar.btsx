@@ -4,6 +4,7 @@ import { Icon } from '@/lib/icons'
 import { cn } from '@/lib/utils'
 import Drawer, { DrawerClose, DrawerTrigger } from './ui/Drawer.btsx'
 import { ThemeToggle } from './ThemeProvider.btsx'
+import Topbar from "./Topbar.btsx";
 
 module
   export interface MobileSidebarProps {
@@ -20,13 +21,9 @@ component Wordmark
 
 component MobileSidebarTrigger
   props { title }: { title?: string }
-  header(className='sticky inset-x-0 top-0 z-35 flex h-12 items-center justify-between border-b border-border/40 bg-surface/80 backdrop-blur-3xl px-3 md:hidden')
-    Link(to='/' aria-label='App home')
-      Wordmark(title={title})
-    div(className='flex items-center gap-1')
-      ThemeToggle
-      DrawerTrigger(type='button' aria-label='Open navigation' className='grid size-9 touch-manipulation place-items-center rounded-lg text-foreground/70 transition-colors hover:bg-sidebar hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring')
-        Icon(name='menu' className='size-5 opacity-90')
+  Topbar(isMobile)
+    DrawerTrigger(type='button' aria-label='Open navigation' className='grid size-9 touch-manipulation place-items-center rounded-lg text-foreground/70 transition-colors hover:bg-sidebar hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring')
+      Icon(name='menu' className='size-5 opacity-90')
 
 component MobileSidebarHeader
   props { title }: { title?: string }
@@ -38,7 +35,7 @@ component MobileSidebarHeader
         Icon(name='close' className='size-4 opacity-90')
 
 props { children, open, onOpenChange, title = 'Mobile Web', className }: MobileSidebarProps
-setup const trigger = createElement(MobileSidebarTrigger, { title })
+setup const trigger = createElement(MobileSidebarTrigger)
 
 Drawer(
   ~ open={open}
@@ -53,5 +50,5 @@ Drawer(
   ~ )
   div(className='pointer-events-none absolute inset-0 overflow-hidden' aria-hidden='true')
     div(className='absolute -right-48 -top-64 size-152 rounded-full bg-cyan-200/8 blur-3xl dark:bg-lime-200/3')
-  MobileSidebarHeader(title={title})
+  Topbar(isMobile)
   | #{children}

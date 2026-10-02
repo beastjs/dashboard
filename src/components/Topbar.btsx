@@ -3,11 +3,14 @@ import { Icon } from '@/lib/icons';
 import Button from "./ui/Button.btsx";
 import { ThemeToggle } from "./ThemeProvider.btsx";
 import { Link } from "@octanejs/tanstack-router";
+import { OctaneNode } from "octane";
 
 module
   interface TopbarProps {
-      toggleSidebar: VoidFunction
+      toggleSidebar?: VoidFunction
       isCompact?: boolean
+      isMobile?: boolean
+      children?: OctaneNode
     }
   export interface BrandProps {
     brandName?: string
@@ -30,13 +33,14 @@ component Brand
     div #{children}
 
 
-props { toggleSidebar, isCompact = false }: TopbarProps
+props { toggleSidebar, isCompact = false, children }: TopbarProps
 header(className="sticky top-0 z-40 backdrop-blur-3xl w-full border-b-[0.5px] border-sidebar-border")
   div(className="topbar w-full px-5 flex items-center justify-between gap-4")
-    Brand(brandName='Beast Dashboard')
+    Brand(brandName='Dashboard')
       div(className="hidden md:flex items-center")
         button(className="size-6 aspect-square place-items-center text-input hover:text-foreground/80 hover:border-input transition" onClick={toggleSidebar} aria-label={isCompact ? "Expand sidebar" : "Compact sidebar"} aria-pressed={isCompact} title={isCompact ? "Expand sidebar" : "Compact sidebar"})
           Icon(name='sidebar' className="size-5")
     div(className="flex items-center gap-2")
       ThemeToggle
       Button(label="Docs" variant='default' size="sm" type='a' href='https://beast-docs.vercel.app' target="_blank" rel="noopener noreferrer" className="hidden md:flex")
+      | #{children}
