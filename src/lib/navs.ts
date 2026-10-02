@@ -4,15 +4,17 @@ export type NavItem = {
   href: string
   icon: IconName
   label: string
-  description: string
-  title: string
-  value: string | number
+  value: string
   tags: string[]
+  description?: string
+  short?: string
+  disabled?: boolean
 }
 
 export type NavGroup = {
   title: string
   items: NavItem[]
+  label?: string
 }
 export const navGroups: NavGroup[] = [
   {
@@ -20,29 +22,29 @@ export const navGroups: NavGroup[] = [
     items: [
       {
         href: '/',
+        value: 'new',
         icon: 'new-folder',
         label: 'New',
-        title: 'New',
+        short: 'New',
         description: 'New Folder',
-        value: '00',
         tags: ['create', 'new file', 'new folder']
       },
       {
         href: '/projects',
         icon: 'account',
         label: 'Projects',
-        title: 'Projects',
+        short: 'Projects',
         description: 'My Projects',
-        value: '08',
+        value: 'account',
         tags: ['projects']
       },
       {
         href: '/deck-builder',
         icon: 'sidebar',
         label: 'Deck Builder',
-        title: 'Deck Builder',
+        short: 'Deck Builder',
         description: 'My Deck Builder',
-        value: '00',
+        value: 'deck-builder',
         tags: ['deck builder']
       }
     ]
@@ -53,30 +55,70 @@ export const navGroups: NavGroup[] = [
       {
         href: 'https://beast-docs-adv.beastjs.workers.dev',
         icon: 'beast',
-        label: 'beast-tsrx',
-        title: '',
-        description: '',
-        value: '↗',
-        tags: ['']
+        label: 'Beast Docs',
+        short: 'Beast Docs',
+        description: 'Beast Developer Docs',
+        value: 'beast-docs',
+        tags: ['beast', 'docs']
       }
     ]
   }
 ]
 
-export const branches = [
+export const branches: NavGroup[] = [
   {
-    label: 'Getting started',
-    children: [
-      { value: 'install', label: 'Installation', icon: 'settings' },
-      { value: 'quick', label: 'Quick start', icon: 'settings' },
-      { value: 'config', label: 'Configuration', icon: 'settings' }
+    title: 'Getting started',
+    items: [
+      {
+        short: 'install',
+        value: 'install',
+        href: 'install',
+        label: 'Installation',
+        icon: 'folder',
+        description: 'settings',
+        tags: ['tags']
+      },
+      {
+        short: 'quick',
+        value: 'quick',
+        href: 'quick',
+        label: 'Quick start',
+        icon: 'folder',
+        description: 'settings',
+        tags: ['tags']
+      },
+      {
+        short: 'config',
+        value: 'config',
+        href: 'config',
+        label: 'Configuration',
+        icon: 'folder',
+        description: 'settings',
+        tags: ['tags']
+      }
     ]
   },
   {
-    label: 'Components',
-    children: [
-      { value: 'buttons', label: 'Buttons' },
-      { value: 'overlays', label: 'Overlays' }
+    title: 'Components',
+    items: [
+      {
+        short: 'buttons',
+        value: 'buttons',
+        href: 'buttons',
+        label: 'Buttons',
+        icon: 'folder',
+        description: 'settings',
+        tags: ['tags']
+      },
+      {
+        short: 'overlays',
+        value: 'overlays',
+        href: 'overlays',
+        label: 'Overlays',
+        icon: 'folder',
+        description: 'settings',
+        tags: ['tags']
+      }
     ]
   }
 ]

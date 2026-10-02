@@ -2,25 +2,28 @@ module "use client";
 import { useLayoutEffect, useRef, useState } from "octane";
 import { Icon, type IconName } from "@/lib/icons";
 import type { ReactElement } from "octane";
+import {navGroups, NavGroup, NavItem} from '@/lib/navs'
+import { Link } from '@octanejs/tanstack-router';
+import { cn } from '@/lib/utils';
 
 module
-  interface BranchedMenuChild {
-    ~ value: string;
-    ~ label: string;
-    ~ icon?: IconName | ReactElement;
-    ~ disabled?: boolean
-    ~ }
-  export interface BranchedMenuItem {
-    ~ label: string;
-    ~ value?: string;
-    ~ children?: BranchedMenuChild[];
-    ~ }
+  // interface BranchedMenuChild {
+  //   ~ value: string;
+  //   ~ label: string;
+  //   ~ icon?: IconName | ReactElement;
+  //   ~ disabled?: boolean
+  //   ~ }
+  // export interface BranchedMenuItem {
+  //   ~ label: string;
+  //   ~ value?: string;
+  //   ~ children?: BranchedMenuChild[];
+  //   ~ }
   interface BranchedMenuProps {
-    ~ items?: BranchedMenuItem[];
+    ~ items?: NavGroup[];
     ~ defaultOpen?: number | number[];
     ~ defaultActive?: string;
     ~ active?: string;
-    ~ onSelect?: (value: string, item: BranchedMenuChild | BranchedMenuItem) => void;
+    ~ onSelect?: (value: string, item: NavItem | NavGroup) => void;
     ~ onToggle?: (index: number, open: boolean) => void;
     ~ color?: string;
     ~ accentColor?: string;
@@ -36,39 +39,19 @@ module
     ~ foldDuration?: number;
     ~ className?: string;
     ~ }
-  const DEFAULT_ITEMS: BranchedMenuItem[] = [
-    {
-      label: "Getting started",
-      children: [
-        { value: "install", label: "Installation", icon: 'folder' },
-        { value: "quick", label: "Quick start", icon:'folder' },
-        { value: "config", label: "Configuration", icon:'folder' },
-        { value: "theming", label: "Theming", icon:'folder' }
-      ]
-    },
-    {
-      label: "Components",
-      children: [
-        { value: "buttons", label: "Buttons", icon:'folder' },
-        { value: "typography", label: "Typography", icon:'folder' },
-        { value: "overlays", label: "Overlays", icon:'folder' },
-        { value: "toasts", label: "Toasts", icon:'folder', disabled: true }
-      ]
-    }
-  ];
   const PAD = 6;
   const MARK = 16;
   const toSet = (open: number | number[]) => new Set(Array.isArray(open) ? open : open >= 0 ? [open] : []);
 
-props { items = DEFAULT_ITEMS, defaultOpen = 0, defaultActive, active: controlledActive, onSelect, onToggle, color = "currentColor", accentColor = "currentColor", lineColor = "currentColor", width = 240, rowHeight = 32, indent = 40, trunk = 18, radius = 10, lineWidth = 1.5, fontSize = 14, drawDuration = 400, foldDuration = 300, className }: BranchedMenuProps
+props { items = navGroups, defaultOpen = 0, defaultActive, active: controlledActive, onSelect, onToggle, color = "currentColor", accentColor = "currentColor", lineColor = "currentColor", width = 240, rowHeight = 32, indent = 40, trunk = 18, radius = 10, lineWidth = 1.5, fontSize = 14, drawDuration = 400, foldDuration = 300, className }: BranchedMenuProps
 setup
   const [open, setOpen] = useState<Set<number>>(() => toSet(defaultOpen));
 
   const [activeValue, setActive] = useState(() => {
     if (defaultActive)
       return defaultActive;
-    const first = items.find((it, i) => it.children && toSet(defaultOpen).has(i));
-    return first?.children?.[0]?.value ?? "";
+    const first = items.find((it, i) => it.items && toSet(defaultOpen).has(i));
+    return first?.items?.[0]?.value ?? "";
   });
   const active = controlledActive ?? activeValue;
 
@@ -82,7 +65,7 @@ setup
   }>({});
 
   latest.current = { onSelect, onToggle };
-  const activeSection = items.findIndex(it => it.children?.some(kid => kid.value === active));
+  const activeSection = items.findIndex(it => it.items?.some(kid => kid.value === active));
   const markerShown = activeSection >= 0 && open.has(activeSection);
 
   useLayoutEffect(() => {
@@ -116,7 +99,7 @@ setup
     return () => ro.disconnect();
   }, [activeSection, markerShown, items, fontSize, rowHeight]);
 
-  const select = (value: string, item: BranchedMenuChild | BranchedMenuItem) => {
+  const select = (value: string, item: NavItem | NavGroup ) => {
     setActive(value);
     latest.current.onSelect?.(value, item);
   };
@@ -159,45 +142,47 @@ nav(
   ~ }}
   ~ )
   span(
-    ~ className="absolute -top-px left-0 z-[1] h-4 w-0.5 rounded-[1px] opacity-100 [background:var(--bm-accent)] [transition:top_220ms_cubic-bezier(0.23,1,0.32,1),opacity_150ms_ease] data-[on]:opacity-100 motion-reduce:[transition:opacity_150ms_ease] pointer-events-none select-none"
+    ~ className={cn("absolute top-px left-0 z-[1] h-4.25 w-0.5 rounded-[1px] opacity-20 [background:var(--bm-accent)] [transition:top_220ms_cubic-bezier(0.23,1,0.32,1),opacity_150ms_ease] data-[on]:opacity-100 motion-reduce:[transition:opacity_150ms_ease] pointer-events-none select-none", {'opacity-100': markerShown})}
     ~ ref={markerRef}
     ~ aria-hidden="true"
     ~ )
-  each item, i in items key item.value ?? item.label
-    div(className="group/section flex flex-col" data-open={item.children && open.has(i) ? "" : undefined})
+  each item, i in items key item.title
+    div(className="group/section flex flex-col" data-open={item.items && open.has(i) ? "" : undefined})
       button(
-        ~ className="-ms-2 block cursor-pointer border-0 bg-transparent ps-2 py-1 text-left font-medium outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-[var(--bm-focus)] [color:var(--bm-muted)] [font-family:inherit] [font-size:calc(var(--bm-font)+1px)] [-webkit-tap-highlight-color:transparent] [transition:color_200ms_ease] group-data-[open]/section:[color:var(--bm-ink)] data-[active]:[color:var(--bm-ink)] hover:[color:var(--bm-ink)] select-none"
+        ~ className=" flex cursor-pointer border-0 bg-transparent gap-2 -ms-2.25 ps-2 py-1.5 text-left font-semibold tracking-tight outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-[var(--bm-focus)] [color:var(--bm-muted)] [font-family:inherit] [font-size:calc(var(--bm-font)+1px)] [-webkit-tap-highlight-color:transparent] [transition:color_200ms_ease] group-data-[open]/section:[color:var(--bm-ink)] data-[active]:[color:var(--bm-ink)] hover:[color:var(--bm-ink)] select-none"
         ~ ref={el => {
         ~   heads.current[i] = el;
         ~   }}
         ~ type="button"
-        ~ aria-expanded={item.children ? open.has(i) : undefined}
-        ~ aria-current={!item.children && (item.value ?? item.label) === active ? "true" : undefined}
-        ~ data-active={!item.children && (item.value ?? item.label) === active ? "" : undefined}
-        ~ onClick={() => (item.children ? toggle(i) : select(item.value ?? item.label, item))}
-        ~ ) #{item.label}
+        ~ aria-expanded={item.items ? open.has(i) : undefined}
+        ~ aria-current={!item.items && (item.title ?? item.label) === active ? "true" : undefined}
+        ~ data-active={!item.items && (item.title ?? item.label) === active ? "" : undefined}
+        ~ onClick={() => (item.items ? toggle(i) : select(item.title ?? item.label, item))}
+        ~ )
+        span #{item.title}
+        Icon(name='chevron-down' size={12} className={cn('-rotate-90 opacity-50', {'rotate-0': item.items && open.has(i)})})
 
-      if item.children
+      if item.items
         div(className="grid [grid-template-rows:0fr] [transition:grid-template-rows_var(--bm-fold)_cubic-bezier(0.23,1,0.32,1)] group-data-[open]/section:[grid-template-rows:1fr] motion-reduce:transition-none" aria-hidden={!open.has(i)})
           div(className="min-h-0 overflow-hidden")
-            div(className="relative px-1 box-border py-1.5" style={{ height: PAD * 2 + item.children.length * rowHeight }})
+            div(className="relative px-1 box-border py-1.5" style={{ height: PAD * 2 + item.items.length * rowHeight }})
               svg(
                 ~ className="pointer-events-none absolute top-0 left-0 overflow-visible opacity-0 [transition:opacity_200ms_ease] group-data-[open]/section:opacity-100 group-data-[open]/section:[transition:opacity_250ms_ease_100ms]"
                 ~ width={indent}
-                ~ height={PAD * 2 + item.children.length * rowHeight}
+                ~ height={PAD * 2 + item.items.length * rowHeight}
                 ~ aria-hidden="true"
                 ~ )
-                if item.children.length > 0
+                if item.items.length > 0
                   path(
                     ~ className="fill-none [stroke:var(--bm-line)] [stroke-width:var(--bm-line-w)] [stroke-linecap:round] [stroke-linejoin:round]"
-                    ~ d={`M ${trunk} 0 V ${rowY(item.children.length - 1) - r}`}
+                    ~ d={`M ${trunk} 0 V ${rowY(item.items.length - 1) - r}`}
                     ~ )
-                each kid, k in item.children key kid.value
+                each kid, k in item.items key kid.value
                   path(
                     ~ className="fill-none [stroke:var(--bm-line)] [stroke-width:var(--bm-line-w)] [stroke-linecap:round] [stroke-linejoin:round]"
                     ~ d={branch(k)}
                     ~ )
-                each kid, k in item.children key kid.value
+                each kid, k in item.items key kid.value
                   path(
                     ~ className="fill-none [stroke:var(--bm-accent)] [stroke-width:var(--bm-line-w)] [stroke-linecap:round] [stroke-linejoin:round] [transition:stroke-dashoffset_var(--bm-draw)_cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
                     ~ d={reach(k)}
@@ -206,10 +191,10 @@ nav(
                     ~ strokeDashoffset: kid.value === active ? 0 : length(k)
                     ~ }}
                     ~ )
-              each kid in item.children key kid.value
-                button(
+              each kid in item.items key kid.value
+                Link(
                   ~ className="m-0 box-border flex w-full cursor-pointer items-center gap-1 border-0 bg-transparent py-0 pr-0 text-left outline-none focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-[var(--bm-focus)] [height:var(--bm-row)] [padding-left:var(--bm-indent)] [color:var(--bm-muted)] [font-family:inherit] [-webkit-tap-highlight-color:transparent] [transition:color_200ms_ease] hover:[color:var(--bm-ink)] disabled:hover:[color:var(--bm-muted)] disabled:opacity-50 data-[active]:font-medium data-[active]:[color:var(--bm-accent)]"
-                  ~ type="button"
+                  ~ to={kid.href}
                   ~ aria-current={kid.value === active ? "true" : undefined}
                   ~ data-active={kid.value === active ? "" : undefined}
                   ~ tabIndex={open.has(i) ? 0 : -1}

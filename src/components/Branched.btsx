@@ -1,8 +1,7 @@
 
 import { cn } from "../lib/utils"
-import { navGroups, branches } from "../lib/navs"
 import { Link } from "@octanejs/tanstack-router"
-import BranchedMenu, { BranchedMenuItem } from "./ui/BranchedMenu.btsx";
+import BranchedMenu from "./ui/BranchedMenu.btsx";
 
 module
   export interface BranchedItemProps {
@@ -48,7 +47,7 @@ component BranchedNav
       ~ accentColor="var(--accent)"
       ~ lineColor="var(--line)"
       ~ width={180}
-      ~ rowHeight={28}
+      ~ rowHeight={32}
       ~ indent={28}
       ~ trunk={4}
       ~ radius={4}
